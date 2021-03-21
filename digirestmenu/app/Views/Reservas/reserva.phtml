@@ -1,0 +1,60 @@
+    <main class="row justify-content-center">
+        <form action="<?=$_SESSION['client']->rota_raiz?>/reservas/cadastrareserva" method="post" class="col-md-10 col-lg-8 px-5">
+            <h5 class="my-5 text-center">Finalize sua reserva</h5>
+            <div class="row justify-content-center">
+                <input type="hidden" name="id_cliente" value="<?= $cl->id  ?>">
+                <input type="hidden" name="nome" value="<?= $cl->nome ?>">
+                <input type="hidden" name="telefone" value="<?= $cl->telefone  ?>">
+                <input type="hidden" name="email" value="<?= $cl->email ?>">
+                <div class="col-sm-6 col-md-4 d-flex flex-column justify-content-center mb-4">
+                    <label for="" class="text-center">Quantidade de pessoas:</label>
+                    <input type="number" class="input-number mx-auto" name="qtdPessoas" required min="1" value="2" autofocus>
+                </div>                   
+                <div class="col-sm-6 col-md-4 d-flex flex-column justify-content-center mb-4">
+                    <label for="" class="text-center">Data da reserva:</label>
+                    <input 
+                        type="date" 
+                        class="input-number mx-auto"
+                        name="data" 
+                        required 
+                        min="<?= Date('Y-m-d'); ?>" value="<?= Date('Y-m-d'); ?>" 
+                        onchange="getHorarios('<?=$_SESSION['client']->rota_raiz?>/reservas/buscahorarios', this.value);"
+                    >
+                </div>
+                <div class="col-sm-6 col-md-4 d-flex flex-column justify-content-center mb-4">
+                    <label for="" class="text-center">Horário da reserva:</label>
+                    <select name="horario" class="input-number mx-auto" id="reservaData">
+                        <?php foreach($horario as $hora){?>
+                            <option 
+                                value="<?= $hora ?>"
+                                <?php 
+                                    foreach($bloqueio as $blo){
+                                        if($hora == $blo){
+                                            echo 'disabled';
+                                        }
+                                    }
+                                ?>
+                            >
+                                <?= $hora ?>
+                                <?php 
+                                    foreach($bloqueio as $blo){
+                                        if($hora == $blo){
+                                            echo 'Indisponível';
+                                        }
+                                    }
+                                ?>
+                            </option> 
+                        <?php }?>
+                    </select>
+                </div>   
+                <div class="col-10 d-flex flex-column justify-content-center">
+                    <label for="" class="text-center">Observação:</label>
+                    <textarea name="observacao" cols="30" rows="5"></textarea>
+                </div>                             
+            </div>
+            <input type="submit" value="Finalizar reserva" class="btn btn-success mt-3 mb-5 d-block mx-auto">
+        </form>
+    </main>
+    
+</body>
+</html>

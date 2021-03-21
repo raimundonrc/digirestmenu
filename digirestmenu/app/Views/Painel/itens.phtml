@@ -1,0 +1,333 @@
+<?php 
+    $_SESSION['route'] = $_SESSION['client']->rota_raiz.'/painel/itens';
+?>
+
+<div class="p-2">
+    <?php if(isset($_SESSION['insert']) && $_SESSION['insert'] === true){ ?>
+        <div class="alert alert-success">
+            Item criado com sucesso!
+            <button class="close" data-dismiss="alert">x</button>
+        </div>
+    <?php } else if(isset($_SESSION['insert']) && $_SESSION['insert'] === false) {?>
+        <div class="alert alert-danger">
+            Erro ao criar o item, verifique se os dados estão corretos.
+            <button class="close" data-dismiss="alert">x</button>
+        </div>
+    <?php } ?>
+    <?php if(isset($_SESSION['update']) && $_SESSION['update'] === true){ ?>
+        <div class="alert alert-success">
+            Item alterado com sucesso!
+            <button class="close" data-dismiss="alert">x</button>
+        </div>
+    <?php } else if(isset($_SESSION['update']) && $_SESSION['update'] === false) {?>
+        <div class="alert alert-danger">
+            Erro ao alterar o item, verifique se os dados estão corretos.
+            <button class="close" data-dismiss="alert">x</button>
+        </div>
+    <?php } ?>
+    <?php if(isset($_SESSION['delete']) && $_SESSION['delete'] === true){ ?>
+        <div class="alert alert-success">
+            Item Excluído com sucesso!
+            <button class="close" data-dismiss="alert">x</button>
+        </div>
+    <?php } else if(isset($_SESSION['delete']) && $_SESSION['delete'] === false) {?>
+        <div class="alert alert-danger">
+            Erro ao excluir o item, contate o suporte.
+            <button class="close" data-dismiss="alert">x</button>
+        </div>
+    <?php } ?>
+
+    <?php 
+        if(isset($_SESSION['insert'])){
+            unset($_SESSION['insert']);
+        }
+
+        if(isset($_SESSION['update'])){
+            unset($_SESSION['update']);
+        }   
+
+        if(isset($_SESSION['delete'])){
+            unset($_SESSION['delete']);
+        }   
+    ?>
+
+    <section class="mt-3">
+        <div>
+            <?php if(count($subgrupo) > 0){ ?>
+            <button class="btn btn-sm btn-success my-3" data-toggle="modal" data-target="#modal-add-item">
+                <i class="fa fa-plus-circle fa-lg"></i>    
+                <span>Criar item</span>
+            </button>
+            <?php } else { ?>
+                <h5 class="text-primary m-0">Para criar item é necessário antes cadastrar um subgrupo.</h5>
+                <button class="btn btn-sm btn-success my-3" onclick="loadPage('<?=$_SESSION['client']->rota_raiz?>/painel/subgrupos');">
+                <i class="fa fa-plus-circle fa-lg"></i>    
+                <span>cadastrar subgrupo</span>
+            </button>
+            <?php } ?>
+        </div>
+        <label for="">Selecione o subgrupo:</label>
+        <select class="custom-select" onchange="loadPage('<?=$_SESSION['client']->rota_raiz?>/painel/itens?idSubgrupo='+this.value)">
+            <?php foreach($subgrupo as $sub){ ?>
+                <option 
+                    value="<?= $sub->id ?>" 
+                    <?php if(isset($idSubgrupo[1]) && $idSubgrupo[1] === $sub->id){
+                        echo 'selected';
+                    }   
+                    ?>
+                >
+                    <?= $sub->descricao ?>
+                </option>
+            <?php } ?>
+        </select>
+        <div class="table-responsive">        
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th class="text-secondary">Itens</th>
+                        <th class="text-secondary">Preço</th>
+                        <th class="text-secondary">Status</th>
+                        <th class="text-secondary">Aparece no banner</th>
+                        <th class="text-secondary">Editar</th>
+                    </tr>                
+                </thead>
+                <tbody>
+                    <?php if(count($item) < 1) { ?>
+                        <tr>
+                            <td colspan="3" class="text-secondary">Nenhum item criado.</td>
+                        </tr>
+                    <?php } ?>
+                        <?php foreach($item as $value){ ?>
+                            <?php $status = $value->ativo ? 'Ativo' : 'Inativo'; ?>
+                            <?php $color = $value->ativo ? 'text-success' : 'text-secondary'; ?>
+                            <tr>
+                                <td class="<?php echo !$value->ativo ? 'text-secondary' : ''; ?>">
+                                    <h6 class=""><?=$value->nome?></h6>
+                                </td>
+                                <td>
+                                    <h6 class="">R$ <?=number_format($value->preco, 2, ',', '.')?></h6>
+                                </td>
+                                
+                                <td>
+                                    <h6 class="<?=$color?>"><?=$status?></h6>
+                                </td>
+                                <td>
+                                    <?php if($value->destaque){ ?>
+                                        <i class="fa fa-check text-success"></i>
+                                    <?php }?>
+                                </td>
+                                <td class="d-flex justify-content-end">
+                                    <button 
+                                        class="mr-2" 
+                                        onclick="abrirModalAlteraItem(
+                                            <?=$value->id?>, 
+                                            '<?=$value->nome?>',
+                                            '<?=$value->descricao?>',
+                                            <?=$value->preco?>,
+                                            '<?=$value->id_subgrupo?>',
+                                            '<?=$value->foto?>',
+                                            <?=$value->destaque?>,
+                                            <?=$value->ativo?>
+                                        );"
+                                    >
+                                        <i class="fa fa-edit fa-lg text-primary"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <div id="modal-add-item" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>Criar item</h4>
+                    <button class="close" data-dismiss="modal">x</button>
+                </div>
+                <div class="modal-body">
+                    <form action="<?=$_SESSION['client']->rota_raiz?>/painel/item/insere" method="post" enctype="multipart/form-data">
+                        <label>Item:</label>
+                        <input type="text" name="nome" class="form-control mb-3" required>
+                        <label>Decrição:</label>
+                        <textarea name="descricao" cols="30" rows="5" class="form-control mb-3"></textarea>
+                        <label>Preço:</label>
+                        <input type="number" name="preco" class="form-control mb-3"  min="0.01" step="0.01" required>
+                        <label>Subgrupo:</label>
+                        <select name="subgrupo" class="form-control mb-3">
+                            <?php foreach($subgrupo as $sub){ ?>
+                                <option 
+                                    value="<?= $sub->id ?>"
+                                    <?php if(isset($idSubgrupo[1]) && $idSubgrupo[1] === $sub->id){
+                                            echo 'selected';
+                                        }   
+                                    ?>
+                                >
+                                    <?= $sub->descricao ?>
+                                </option>
+                            <?php } ?>
+                        </select>
+                        <label>Foto: (Formatos: JPG, JPEG, PNG ou GIF. Máximo 2MB)</label>
+                        <input type="file" name="foto" class="form-control mb-3">
+                        <label>Ativo:</label>
+                        <input type="radio" name="ativo" value="1" checked class="mr-5">
+                        <label>Inativo:</label>
+                        <input type="radio" name="ativo" value="0">
+                        <div class="d-flex justify-content-between mt-4">
+                            <input type="submit" value="Salvar" class="btn btn-success">
+                            <button class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-altera-item" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 id="txt-header-altera-item">Alterar item - <strong class="nome-item"></strong></h4>
+                    <button class="close" data-dismiss="modal">x</button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-center">
+                        <img width="150" height="150" src="" alt="Foto do Item" class="rounded path-foto">
+                    </div>
+                    <div class="d-flex justify-content-center my-2">
+                        <button class="btn btn-primary btn-sm mr-2" data-toggle="modal" data-target="#modal-altera-foto" data-dismiss="modal" data-backdrop="static" data-keyboard="false">
+                                <i id="icon-btn-altera-foto"></i>
+                                <span id="txt-btn-altera-foto"></span>
+                        </button>
+                        <button id="btn-excluir-foto" class="btn btn-danger btn-sm d-none" data-toggle="modal" data-target="#modal-deleta-foto" data-dismiss="modal" data-backdrop="static" data-keyboard="false">
+                            <i class="fa fa-trash"></i>
+                            <span>Excluir foto</span>
+                        </button>
+                    </div>
+                    <form action="<?=$_SESSION['client']->rota_raiz?>/painel/item/altera" method="post">
+                        <input type="hidden" id="item-id" name="id">
+                        <div id="tags-altera-destaque" class="my-3">
+                            <label class="mr-1">Aparece no banner:</label>
+                            <input id="altera-destaque" type="checkbox" name="destaque">
+                        </div>
+                        <label>Item:</label>
+                        <input id="altera-nome" type="text" name="nome" class="form-control mb-3" required>
+                        <label>Decrição:</label>
+                        <textarea id="altera-descricao" name="descricao" cols="30" rows="10" class="form-control mb-3"></textarea>
+                        <label>Preço:</label>
+                        <input id="altera-preco" type="number" name="preco" class="form-control mb-3"  min="0.01" step="0.01" required>
+                        <label>Subgrupo:</label>
+                        <select id="id_subgrupo" name="subgrupo" class="form-control mb-3">
+                            <?php foreach($subgrupo as $sub){ ?>
+                                <option value="<?= $sub->id ?>">
+                                    <?= $sub->descricao ?>
+                                </option>
+                            <?php } ?>
+                        </select>                        
+                        <label>Ativo:</label>
+                        <input id="altera-ativo" type="radio" name="ativo" value="1" checked class="mr-3">
+                        <label>Inativo:</label>
+                        <input id="altera-inativo" type="radio" name="ativo" value="0">
+                        <button class="ml-md-5 ml-3 btn btn-danger btn-sm" data-toggle="modal" data-target="#modal-deleta-item" data-dismiss="modal" data-backdrop="static" data-keyboard="false">
+                            <i class="fa fa-trash"></i>
+                            <span>Excluir Item</span> 
+                        </button>
+                        <div class="d-flex justify-content-between mt-4">
+                            <input type="submit" value="Salvar" class="btn btn-success">
+                            <button class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="modal-altera-foto" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header"> 
+                    <h5> <span id="acao-foto">Inserir</span>  foto - <strong class="nome-item"></strong></h5>                   
+                    <button class="close" data-dismiss="modal" data-dismiss="modal" data-toggle="modal" data-target="#modal-altera-item">x</button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-center">
+                        <img width="150" height="150" src="" alt="Foto do Item" class="rounded path-foto">
+                    </div>                                          
+                    <form action="<?=$_SESSION['client']->rota_raiz?>/painel/item/foto/altera" method="post" enctype="multipart/form-data">
+                        <input type="hidden" id="path-foto-alterar" name="path-foto">
+                        <input type="hidden" id="id-item-alterar" name="idItem">
+                        <input type="hidden" id="id-subgrupo-alterar" name="idSubgrupo">
+                        
+                        <div class="my-4">
+                            <small id="txt-atencao" class="text-danger">
+                                *Atenção!! A foto atual será excluída e não poderá ser recuperada.
+                            </small>
+                        </div>                                            
+                        <label>Nova foto:</label>
+                        <small>(Formatos: JPG, JPEG, PNG ou GIF. Máximo 2MB)</small>
+                        <input id="nova-foto" type="file" name="foto" class="form-control" required> 
+                        <div class="d-flex justify-content-between my-4 border-top pt-3">
+                            <input type="submit" class="btn btn-success" value="Salvar">
+                            <button class="btn btn-danger" data-dismiss="modal" data-toggle="modal" data-target="#modal-altera-item">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>                    
+    </div>
+
+    <div id="modal-deleta-foto" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header"> 
+                    <h5>Excluir foto - <strong class="nome-item"></strong></h5>                   
+                    <button class="close" data-dismiss="modal" data-dismiss="modal" data-toggle="modal" data-target="#modal-altera-item">x</button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-center">
+                        <img width="150" height="150" src="" alt="Foto do Item" class="rounded path-foto">
+                    </div>
+                    <h6 class="text-danger my-3">Tem certeza que deseja excluir a foto do item <strong class="nome-item"></strong>? Não será possível recuperá-la.</h6>                               
+                    <form action="<?=$_SESSION['client']->rota_raiz?>/painel/item/foto/deleta" method="post">
+                        <input type="hidden" id="path-foto-deletar" name="path-foto">
+                        <input type="hidden" id="id-item" name="idItem">
+                        <input type="hidden" id="id-subgrupo" name="idSubgrupo">
+                        <div class="d-flex justify-content-between my-4 border-top pt-3">
+                            <input type="submit" class="btn btn-danger" value="Sim, excluir.">
+                            <button class="btn btn-success" data-dismiss="modal" data-toggle="modal" data-target="#modal-altera-item">Não, manter a foto.</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>                    
+    </div>
+
+    <div id="modal-deleta-item" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header"> 
+                    <h5>Excluir - <strong class="nome-item"></strong></h5>                   
+                    <button class="close" data-dismiss="modal" data-toggle="modal" data-target="#modal-altera-item">x</button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-center">
+                        <img width="150" height="150" src="" alt="Foto do Item" class="rounded path-foto">
+                    </div>
+                    <h5 class="text-center nome-item my-3"></h5>
+                    <h6 class="text-danger my-3">Tem certeza que deseja excluir o item <strong class="nome-item"></strong>? Não será possível recuperá-lo.</h6>                               
+                    <form action="<?=$_SESSION['client']->rota_raiz?>/painel/item/deleta" method="post">
+                        <input type="hidden" id="path-foto-item-deletar" name="pathFoto">
+                        <input type="hidden" id="id-item-deleta" name="idItem">
+                        <input type="hidden" id="id-subgrupo-deleta" name="idSubgrupo">
+                        <div class="d-flex justify-content-between my-4 border-top pt-3">
+                            <input type="submit" class="btn btn-danger" value="Sim, excluir.">
+                            <button class="btn btn-success" data-dismiss="modal" data-toggle="modal" data-target="#modal-altera-item">Não, manter o item.</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>                    
+    </div>
+</div>

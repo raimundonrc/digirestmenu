@@ -1,0 +1,464 @@
+<div class="p-2">
+    
+    <section class="border-bottom"> 
+        <div class="p-3">
+            <h3 class="text-center mt-2"> Reservas</h3>
+            <h4>
+                Hoje 
+                <small>
+                    <?php 
+                        echo Date('d/m/Y');
+                    ?>
+                </small>
+            </h4>
+        </div>
+
+        <div class="table-responsive">
+            <?php if(count($reserva) > 0){?>
+                <table class="table table-borderless">
+                    <thead>
+                        <tr>
+                            <th class="text-secondary">Nome</th>
+                            <th class="text-secondary">N° Pessoas</th>
+                            <th class="text-secondary">Horário</th>
+                            <th class="text-secondary">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody> 
+                        <?php foreach($reserva as $value){ ?>
+                            <tr>
+                                <td>
+                                    <div class="w-sp-nowrap">
+                                        <?= $value->nome ?>
+                                        <!-- button + detalhes -->
+                                        <button style="background: none; border:none; margin: 0 0 0 0.2rem;" onclick="abrirModalDadosReserva('<?= $value->nome ?>', '<?= $value->telefone ?>', <?= $value->qtd_pessoas ?>, '<?= $value->data_reserva ?>', '<?= $value->hora_reserva ?>', '<?= $value->observacao ?>', '<?= $value->email ?>')"> 
+                                        <small class="fa fa-info text-secondary"></small>
+                                        </button>
+                                    </div>
+                                    <?php if(isset($value->observacao)){?>
+                                        <small class="text-secondary">"<?= $value->observacao ?>"</small>
+                                    <?php } ?>
+                                </td>
+                                <td>
+                                    <?= $value->qtd_pessoas ?>
+                                </td>
+                                <td>
+                                    <?= $value->hora_reserva ?>
+                                </td>
+
+                                <?php //define a cor do status da reserva
+                                    switch($value->status_reserva){
+                                        case 'RESERVADO':
+                                            $statusColor = 'text-primary';
+                                            break;
+                                        case 'CONCLUIDO':
+                                            $statusColor = 'text-success';
+                                            break;
+                                        case 'CANCELADO':
+                                            $statusColor = 'text-danger';
+                                            break;
+                                    }
+                                ?>
+
+                                <td class="<?= $statusColor ?>">
+                                    <?= $value->status_reserva ?>                                   
+                                </td>
+                                <td>
+                                    <?php if($value->status_reserva === 'RESERVADO'){?>
+                                        <!-- parâmetros do status nos links abaixo: CONCLUIDO (sem acento), CANCELADO e RESERVADO -->
+                                        <a href="/painel/reserva/status?id=<?= $value->id ?>&status=CONCLUIDO" class="fa fa-check-square fa-lg ml-2 text-success"></a>
+                                        
+                                        <?php //Separar dia, mês e ano
+                                            $data = explode('/', $value->data_reserva);
+                                            $dia = $data[0];
+                                            $mes = $data[1];
+                                            $ano = $data[2];
+                                        ?>
+
+                                        <button class="fa fa-edit fa-lg ml-2 text-primary" onclick="abrirModalAlteracaoReserva(<?= $value->id ?>, '<?= $value->nome ?>', '<?= $value->telefone ?>','<?= $value->email ?>', <?= $value->qtd_pessoas ?>, '<?= $ano.'-'.$mes.'-'.$dia ?>', '<?= $value->hora_reserva ?>', '<?= $value->observacao ?>')"></button>
+                                        <a href="/painel/reserva/status?id=<?= $value->id ?>&status=CANCELADO" class="fa fa-window-close fa-lg ml-2 text-danger"></a>
+                                    <?php } else {?>
+                                        <a href="/painel/reserva/status?id=<?= $value->id ?>&status=RESERVADO" class="fa fa-undo-alt fa-lg ml-2 text-secondary"></a>
+                                    <?php } ?>
+                                </td>
+                            </tr>                          
+                        <?php } ?>
+                    </tbody>
+                </table>
+            <?php } else { ?>
+                    <p class="text-center text-secondary p-2 mt-2">Nenhuma reserva encontrada para hoje. Atualize a página ou aperte F5 para verificar se existem novas reservas.</p>
+            <?php }?>
+        </div>                
+    </section>
+
+    <section class="mt-4">
+        <h3 class="text-center mt-2">Últimas avaliações</h3>
+        <h4 class="p-3">Do estabelecimento</h4>
+        <div class="row px-3 justify-content-around">
+
+            <div class="col-lg-5 border-bottom p-2 mb-2">
+                <h5>Maria Fernandes Silva</h5>
+                <p>31/08/2020</p>
+                <p class="m-1">
+                    <span>Recepção:<span>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                </p>
+                <p class="m-1">
+                    <span>Atendimento:<span>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star-o text-warning"></i>
+                </p>
+                <p class="m-1">
+                    <span>Qualidade:<span>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                </p>
+
+                <p class="m-1">
+                    <span>Limpeza:<span>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star-o text-warning"></i>
+                    <i class="fa fa-star-o text-warning"></i>
+                </p>
+                <p class="text-secondary">
+                    "Uma linda vista para o lago. Comida deliciosa. Adorei!"
+                </p>
+            </div>
+
+            <div class="col-lg-5 border-bottom p-2 mb-2">
+                <h5>Karina Medeiros</h5>
+                <p>31/08/2020</p>
+                <p class="m-1">
+                    <span>Recepção:<span>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star-o text-warning"></i>
+                    <i class="fa fa-star-o text-warning"></i>
+                </p>
+                <p class="m-1">
+                    <span>Atendimento:<span>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                </p>
+                <p class="m-1">
+                    <span>Qualidade:<span>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star-o text-warning"></i>
+                </p>
+                <p class="m-1">
+                    <span>Limpeza:<span>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star-o text-warning"></i>
+                </p>
+            </div>
+
+            
+
+        </div>
+
+        <div class="row px-3 collapse navbar-collapse toggle-avaliacao-estabelecimento justify-content-around mt-2">
+
+            <div class="col-lg-5 border-bottom p-2 mb-2">   
+                <h5>Mário Ferreira</h5>
+                <p>31/08/2020</p>
+                <p class="m-1">
+                    <span>Recepção:<span>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star-o text-warning"></i>
+                </p>
+                <p class="m-1">
+                    <span>Atendimento:<span>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                </p>
+                <p class="m-1">
+                    <span>Qualidade:<span>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                </p>
+                <p class="m-1">
+                    <span>Limpeza:<span>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                </p>
+            </div>
+
+            <div class="col-lg-5 border-bottom p-2 mb-2">
+                <h5>Mário Ferreira</h5>
+                <p>31/08/2020</p>
+                <p class="m-1">
+                    <span>Recepção:<span>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star-o text-warning"></i>
+                </p>
+                <p class="m-1">
+                    <span>Atendimento:<span>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                </p>
+                <p class="m-1">
+                    <span>Qualidade:<span>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                </p>
+                <p class="m-1">
+                    <span>Limpeza:<span>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                </p>
+            </div>
+
+        </div>
+
+        <div>
+            <button data-toggle="collapse" data-target=".toggle-avaliacao-estabelecimento" class="btn btn-link mb-4" onclick = "setTextInner('text-btn-ver-mais-avaliacao-estabelecimento');" ondblclick = "setTextInner('text-btn-ver-mais-avaliacao-estabelecimento');">
+                <span id="text-btn-ver-mais-avaliacao-estabelecimento">+ ver mais</span>
+            </button>
+        </div>
+    </section> 
+                    
+    <section>
+        <h4 class="p-3">De produtos</h4>
+        <div class="row px-3 justify-content-around">
+
+            <div class="col-lg-5 border-bottom p-2 mb-2">
+                <h5>Risoto de ossobuco</h5>
+                <h6>Roberto Vieira</h6>                        
+                <p>31/08/2020</p>
+                <p class="m-1">
+                    <span>Sabor:<span>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star-o text-warning"></i>
+                </p>
+                <p class="m-1">
+                    <span>Apresentacao:<span>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star-o text-warning"></i>
+                </p>
+            </div>
+
+            <div class="col-lg-5 border-bottom p-2 mb-2">
+                <h5>Parmeggiana 2 pessoas</h5>
+                <h6>Junior Santana</h6>                        
+                <p>30/08/2020</p>
+                <p class="m-1">
+                    <span>Sabor:<span>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star-o text-warning"></i>
+                    <i class="fa fa-star-o text-warning"></i>
+                </p>
+                <p class="m-1">
+                    <span>Apresentacao:<span>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                </p>
+            </div>
+        </div>
+
+        <div class="row px-3 collapse navbar-collapse toggle-avaliacao-produto justify-content-around mt-2">
+
+            <div class="col-lg-5 border-bottom p-2 mb-2">
+                <h5>Tranche de Salmão</h5>
+                <h6>Fernando Meireles</h6>
+                <p>29/08/2020</p>
+                <p class="m-1">
+                    <span>Sabor:<span>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star-o text-warning"></i>
+                </p>
+                <p class="m-1">
+                    <span>Apresentacao:<span>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                </p>
+            </div>
+
+            <div class="col-lg-5 border-bottom p-2 mb-2">
+                <h5>Filé Fusion</h5>
+                <h6>Alice Souza</h6>                        
+                <p>29/08/2020</p>
+                <p class="m-1">
+                    <span>Sabor:<span>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                </p>
+                <p class="m-1">
+                    <span>Apresentacao:<span>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                    <i class="fa fa-star text-warning"></i>
+                </p>
+            </div>
+
+        </div>
+
+        <div>
+            <button data-toggle="collapse" data-target=".toggle-avaliacao-produto" class="btn btn-link mb-4" onclick = "setTextInner('text-btn-ver-mais-avaliacao-produto');" ondblclick = "setTextInner('text-btn-ver-mais-avaliacao-produto');">
+                <span id="text-btn-ver-mais-avaliacao-produto">+ ver mais</span>
+            </button>
+        </div>
+    </section> 
+            
+    <!--Modal de visualização dos dados da reserva. Dados virão do backend via JS-->
+    <section id="modal-dados-reserva" class="modal">                
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5>Detalhes da reserva</h5>
+                    <button class="close" data-dismiss="modal">x</button>
+                </div>
+
+                <div class="modal-body">
+                    <span>Nome:</span>
+                    <h5 id="dado-nome" class="mb-4"></h5>
+                    <p id="dado-tel"></p>
+                    <p id="dado-qtdPessoas"></p>
+                    <p id="dado-data"></p>
+                    <p id="dado-horario"></p>
+                    <p id="dado-obs" class="text-secondary"></p>
+                    <p id="dado-email"></p>                    
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal de alteração dos dados da reserva -->
+    <section id="modal-alterar-reserva" class="modal">                
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <p class="text-secondary">Alterar reserva</p>
+                    <button class="close" data-dismiss="modal">x</button>
+                </div>
+                <form action="/painel/reserva/altera" method="post">
+                    <div class="modal-body">
+                        <input type="hidden" id="alterar_id" name="id">
+                        <label>Nome:</label>
+                        <input type="text" id="alterar-nome" minlength="3" maxlength="100" required class="form-control" name="nome">
+                        <label>Telefone:</label>                    
+                        <input type="tel" id="telefone" minlength="10" maxlength="11" required class="form-control" onkeyup="validarTelefoneKeyUp(this.value);" name="telefone"> 
+                        <label>E-mail:</label>                   
+                        <input type="email" id="alterar-email" class="form-control" name="email">                    
+                        <label>Número de pessoas:</label>                   
+                        <input type="number" id="alterar-qtdPessoas" min="1" step="1" required class="form-control" name="qtdPessoas">                    
+                        <label>Data:</label>                   
+                        <input type="date" id="alterar-data"  class="form-control" name="data" required>                    
+                        <label>Horário:</label>                   
+                        <select name="horario" id="alterar-horario" class="custom-select">
+                           
+                            <?php //Define os horários de reserva
+                                $hI = explode(':', '12:00');
+                                $horaI = $hI[0];
+                                $minutoI = $hI[1];
+                                $hF = explode(':', '23:00');
+                                $horaF = $hF[0];
+                                $minutoF = $hF[1];
+
+                                for($h = $horaI; $h <= $horaF; $h++){
+                                    switch($h){
+                                        case 1:
+                                        case 2:
+                                        case 3:
+                                        case 4:
+                                        case 5:
+                                        case 6:
+                                        case 7:
+                                        case 8:
+                                        case 9:
+                                            $h = '0'.$h;
+                                            break;                                        
+                                    }
+                                    for($m = $minutoI; $m <= 45; $m += 15){
+
+                            ?>
+                            <option value="<?= $h.':'.$m ?>"> <?= $h.':'.$m ?></option>
+                            <?php 
+                                } 
+                                    }
+                            ?>
+                            
+                        </select> 
+                        <label>observação:</label>   
+                        <textarea name="obs" id="alterar-observacao" cols="30" rows="5" class="form-control"></textarea>                
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <input type="submit" value="Salvar" class="btn btn-success mr-auto">
+                        <button data-dismiss="modal" class="btn btn-danger">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>

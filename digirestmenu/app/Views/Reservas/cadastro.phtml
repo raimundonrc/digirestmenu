@@ -1,0 +1,19 @@
+<main class="row justify-content-center">
+        
+        <form action="<?=$_SESSION['client']->rota_raiz?>/reservas/cadastracliente" method="post" class="col-sm-8 col-md-6 px-5">
+        <h5 class="mt-5">Quase lá!</h5>
+            <p class="mb-5">Só precisaremos de algumas informações e você poderá finalizar sua reserva.</p>
+                <label for="">Nome e sobrenome:</label>
+                <input type="text" class="input-text mb-4" name="nome" required minlength="3">
+                <label for="">Telefone:</label>
+                <input type="text" class="input-text mb-4" name="telefone" required onkeypress="$(this).mask('(00) 0000-00009')" minlength="14" maxlength="15">
+                <label for="">E-mail:</label>
+                <input type="email" value="<?php echo $_POST['email'] ? $_POST['email'] : '' ?>" class="input-text mb-2" name="email" required>
+            <div>
+                <input type="submit" value="Prosseguir" class="btn btn-success mt-2">
+            </div>
+        </form>
+    </main>
+    
+</body>
+</html>

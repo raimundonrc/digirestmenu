@@ -1,0 +1,164 @@
+<?php 
+    $_SESSION['route'] = $_SESSION['client']->rota_raiz.'/painel/subgrupos';
+?>
+
+<div class="p-2">
+
+    <?php if(isset($_SESSION['insert'])){ ?>
+    <?php if($_SESSION['insert'] === true){ ?>
+        <aside class="alert alert-success">
+            <button class="close" data-dismiss="alert">x</button>
+            Subgrupo inserido com sucesso!
+        </aside>
+    <?php } else if(isset($_SESSION['insert']) && $_SESSION['insert'] === false) {?>
+        <aside class="alert alert-danger">
+            <button class="close" data-dissmiss="alert">x</button>
+            Erro ao inserir o subgrupo, verifique se os dados estão corretos.
+        </aside>
+    <?php 
+            } 
+        }
+    ?>
+
+    <?php if(isset($_SESSION['update'])){ ?>
+    <?php if($_SESSION['update'] === true){ ?>
+        <aside class="alert alert-success">
+            <button class="close" data-dismiss="alert">x</button>
+            Atualizado com sucesso!
+        </aside>
+    <?php } else if(isset($_SESSION['update']) && $_SESSION['update'] === false) {?>
+        <aside class="alert alert-danger">
+            <button class="close" data-dismiss="alert">x</button>
+            Erro ao atualizar. Passe o problema para o suporte.
+        </aside>
+    <?php 
+            } 
+        }
+    ?>
+
+    <?php 
+        if(isset($_SESSION['insert'])){
+            unset($_SESSION['insert']);
+        }
+
+        if(isset($_SESSION['update'])){
+            unset($_SESSION['update']);
+        }   
+    ?>
+
+    <button class="btn btn-sm btn-success my-3" data-toggle="modal" data-target="#modal-add-subgrupo">
+        <i class="fa fa-plus-circle fa-lg"></i>    
+        <span>Criar subgrupo</span>
+    </button>
+
+    <section class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th class="text-secondary">Subgrupo</th>
+                    <th class="text-secondary">Status</th>
+                    <th colspan="2" class="text-secondary">Ordem</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if(count($subgrupo) < 1) { ?>
+                    <tr>
+                        <td class="text-secondary">Nenhum subgrupo criado.</td>
+                    </tr>
+                <?php } ?>
+                <?php foreach($subgrupo as $value){ ?>
+                <?php 
+                    if($value->ativo){
+                        $status = 'Ativo'; 
+                        $color = 'text-success';
+
+                    } else {
+                        $status = 'Inativo';                        
+                        $color = 'text-secondary';
+                    }
+                ?>
+                <tr>
+                    <td class="<?php echo $color === 'text-secondary' ? $color : '' ?>">
+                        <h6><?= $value->descricao ?></h6>
+                    </td>
+                    
+                    <td class="<?= $color ?>"><?= $status ?></td>
+                    <td>
+                        <select
+                            id="ordem-<?= $value->ordem ?>" name="ordem<?= $value->ordem ?>" 
+                            onchange="sendUrl('<?=$_SESSION['client']->rota_raiz?>/painel/subgrupo/ordena?id=<?= $value->id ?>&ordem=' + this.value);"
+                        >
+                            <?php foreach($subgrupo as $val){ ?>
+                                <option 
+                                    value="<?= $val->ordem ?>" 
+                                    <?php if($val->ordem == $value->ordem) echo 'selected';?>
+                                >
+                                    <?= $val->ordem ?> 
+                                </option> 
+                            <?php } ?>                       
+                        </select>
+                    </td>
+                    <td class="d-flex justify-content-end">
+                        <button class="mr-2" 
+                        onclick="abrirModalAlteraSubgrupo(
+                            <?= $value->id?>, 
+                            '<?= $value->descricao?>', 
+                            <?= $value->ativo?>
+                        );"
+                    >
+                            <i class="fa fa-edit fa-lg text-primary"></i>
+                        </button>
+                    </td>
+                </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+    </section>
+
+    <div id="modal-add-subgrupo" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>Criar subgrupo</h4>
+                    <button class="close" data-dismiss="modal">x</button>
+                </div>
+                <div class="modal-body">
+                    <form action="<?=$_SESSION['client']->rota_raiz?>/painel/subgrupos/insere" method="post">
+                        <label for="">Descrição:</label>
+                        <input type="text" name="descricao" class="form-control" required>
+                        <div class="d-flex justify-content-between mt-4">
+                            <input type="submit" value="Salvar" class="btn btn-success">
+                            <button class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>        
+    </div>
+
+    <div id="modal-altera-subgrupo" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 id="txt-header-altera-subgrupo">Editar subgrupo</h4>
+                    <button class="close" data-dismiss="modal">x</button>
+                </div>
+                <div class="modal-body">
+                    <form action="<?=$_SESSION['client']->rota_raiz?>/painel/subgrupo/altera" method="post">
+                        <input type="hidden" id="subgrupo-id" name="id" class="form-control">
+                        <label for="">Descrição:</label>
+                        <input type="text" id="altera-descricao" name="descricao" class="form-control" required>                        
+                        <label for="altera-ativo" class="">Ativo:</label>
+                        <input type="radio" id="altera-ativo" name="ativo" class="mr-3" value="1">                        
+                        <label for="altera-inativo" class="">Inativo:</label>
+                        <input type="radio" id="altera-inativo" name="ativo" value="0">                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <input type="submit" value="Salvar" class="btn btn-success">
+                            <button class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>        
+    </div>
+</div>

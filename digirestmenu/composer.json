@@ -1,0 +1,19 @@
+{
+    "name": "digirestmenu/digirestmenu",
+    "description": "Cardápio digital/Reservas",
+    "authors": [
+        {
+            "name": "Raimundo Costa",
+            "email": "raimundo-nr@hotmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "RNF\\": "vendor/RNF/"
+        }
+    }
+}

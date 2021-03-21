@@ -1,0 +1,22 @@
+<?php foreach($horario as $hora){?>
+    <option 
+        class="altHorario"
+        value="<?= $hora ?>"
+        <?php 
+            foreach($bloqueio as $blo){
+                if($hora == $blo){
+                    echo 'disabled';
+                }
+            }
+        ?>
+    >
+        <?= $hora ?>
+        <?php 
+            foreach($bloqueio as $blo){
+                if($hora == $blo){
+                    echo 'Indisponível';
+                }
+            }
+        ?>
+    </option> 
+<?php }?>

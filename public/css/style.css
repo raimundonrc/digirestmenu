@@ -1,0 +1,138 @@
+button{
+    cursor: pointer;
+    border: none;
+    background: none;
+}
+
+button:focus{
+    border: none;
+    outline-style: none;
+    border-bottom: 2px solid  #ccc3c3;
+}
+
+a:hover{
+    text-decoration: none;
+}
+
+/*Id's*/
+#starEstab-1, 
+#starEstab-2,
+#starEstab-3,
+#starEstab-4,
+#starEstab-5,
+#starPrato-1,
+#starPrato-2,
+#starPrato-3,
+#starPrato-4,
+#starPrato-5
+{
+    cursor: pointer;
+}
+
+/***Header top***/
+.h-40v{
+    height: 40vh;
+}
+
+.carousel-item{
+    height: 40vh;
+}
+
+.bg-trasparent{
+    background-color: rgba(8, 8, 8, 0.4);
+    height: 100%;
+    border-radius: 0.2em;
+}
+
+.sticky-top{
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.btn-header{
+    color:  #ffffff;
+    white-space: nowrap;
+    margin-top: 1em;
+    padding: 0 0 0.5em 0;
+    border-bottom: 1px solid #d8cece;
+}
+
+.subgrupo{
+    border-top: 1px solid #d8cece;
+    border-bottom: 1px solid #d8cece;
+    margin-top: 1em;
+    overflow-x: auto;
+    overflow-y: hidden;
+    display: flex;
+    flex-wrap: nowrap;    
+    background-color: #fdfdfd;
+}
+
+.link-subgrupo{
+    display: block;
+    margin: 0.5em;
+    color:#353434;
+    border-radius: 0.2em;
+    padding: 0.5em;
+    white-space: nowrap;
+    font-size: 1em;
+    font-weight: 500;
+}
+
+.link-subgrupo:hover,
+.btn-header:hover
+{
+    color: #757373;
+}
+
+.pagina-ativa{
+    border-bottom: 2px solid  #ccc3c3;
+    color: #757373;
+}
+
+.flex-center{
+    display: flex;
+    justify-content: center;
+}
+
+[type="reset"], [type="submit"], button, html [type="button"] {
+    -webkit-appearance: none;
+}
+
+.row{
+    margin: 0;
+}
+
+.produto{
+    display: flex;
+    flex-direction: column;
+}
+
+.produto-item{
+    flex-grow: 1;
+}
+
+.double-border{
+    border:5px solid #f3f3f3;
+    border-style: double;
+}
+
+.max-w-40{
+    max-width: 40%;
+    word-wrap: break-word;
+    width: fit-content;
+}
+
+/***Modal***/
+#img-modal{
+    border: 10px solid #f3f3f3;
+    border-style: double;
+}
+
+@media screen and (min-width: 768px){
+    .row{
+        margin-top: 0.5em;
+    }
+}
