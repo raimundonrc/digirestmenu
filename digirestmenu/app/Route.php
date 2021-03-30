@@ -115,6 +115,12 @@
                 'action' => 'avaliacoesProdutos'
             ];
 
+            $route['painel/mediaAvaliacoesProdutos'] = [ //chama a pagina avaliacoesProdutos de painel
+                'route' => '/painel/avaliacoes/mediaprodutos',
+                'controller' => 'Painel',
+                'action' => 'mediaAvaliacoesProdutos'
+            ];
+
             $route['painel/reserva'] = [ //chama a pagina reserva de painel
                 'route' => '/painel/reserva',
                 'controller' => 'Painel',
@@ -275,6 +281,12 @@
                 'route' => '/painel/horarios/remove',
                 'controller' => 'Painel',
                 'action' => 'deleteHorario'
+            ];
+
+            $route['painel/itens/options'] = [//Chama a view de <options> dos itens
+                'route' => '/painel/itens/options',
+                'controller' => 'Painel',
+                'action' => 'getItensOption'
             ];
 
             $this->route = $route;

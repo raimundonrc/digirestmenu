@@ -1,0 +1,75 @@
+<?php 
+    $_SESSION['route'] = $_SESSION['client']->rota_raiz.'/painel/avaliacoes/mediaprodutos';
+?>
+<section class="p-3">
+    <h5 class="text-center my-3">Média das avaliações dos seus produtos</h5>
+    <div class="border-bottom row mx-1 p-2">        
+        <div class="col-lg-6 col-xl-5 mt-1">
+            <label>Subgrupo:</label>
+            <select
+                id="avalProd-subgrupo" 
+                class="form-control" 
+                data-url="<?= $_SESSION['client']->rota_raiz ?>/painel/itens/options"
+                onchange="getItensSelect();"
+            >
+                <option value="todos">
+                    Todos
+                </option>
+                <?php if(isset($sub)){ ?>
+                    <?php foreach($sub as $value){ ?>
+                        <option value="<?= $value->id ?>" <?php echo isset($_POST['subgrupo']) && $_POST['subgrupo'] == $value->id ? 'selected' : '' ?>>
+                            <?= $value->descricao ?>
+                        </option>
+                    <?php } ?>
+                <?php } ?>
+            </select>
+        </div>
+        <div class="col-lg-6 col-xl-5 mt-1">
+            <label>Produto:</label>
+            <select id="avalProd-produto" class="form-control">
+                <option value="todos">Todos</option>
+            </select>
+        </div>
+        <div class="mt-2 col-xl-2 d-flex justify-content-start">
+            <button id="btn-search-avalProd" onclick="searchAvalMediaProd();" data-url="<?= $_SESSION['client']->rota_raiz ?>/painel/avaliacoes/mediaprodutos" class="text-light d-flex justify-content-center align-items-center btn btn-primary">
+                <i class="fa fa-search fa-2x d-block"></i>
+                <span class="d-block">Pesquisar</span>
+            </button>
+        </div>
+    </div>
+    <?php if(isset($avaliacoes) && count($avaliacoes) > 0){ ?>
+        <div class="row px-3 justify-content-between mt-2">
+            <?php foreach($avaliacoes as $value){ ?>
+                <div class="col-lg-5 border-bottom p-2 mb-2">                 
+                    <h5><?=$value->nome?></h5>                        
+                    <div class="m-1">
+                        <?php for($i = 1; $i <= 5; $i++){ ?>
+                        <?php if($i <= intval($value->media_notas)){ ?>
+                            <i class="fas fa-star fa-lg text-warning"></i>
+                        <?php } else if($value->media_notas > intval($value->media_notas) && $i == round($value->media_notas)){?>
+                            <i class="fas fa-star-half-alt fa-lg text-warning"></i>
+                        <?php } else {?>
+                            <i class="fa fa-star-o fa-lg text-warning"></i>
+                        <?php } ?>
+                            <?php } ?>
+                            <span class="ml-2"><?= number_format($value->media_notas, 2) ?></span>
+                    </div>
+                </div>
+            <?php } ?>
+        </div>
+    <?php } else {?>
+        <h4 class="text-secondary py-3">Nenhuma avaliação encontrada.</h4>
+    <?php }?>
+</section>
+<aside class="modal" id="modal-erro-dados">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" data-toggle="modal">x</button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-danger">Desculpe, o servidor não está respondendo. Por gentileza, tente novamente mais tarde.</p>
+                </div>
+            </div>
+        </div>
+    </aside>

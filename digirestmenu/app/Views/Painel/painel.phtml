@@ -58,7 +58,7 @@
             </div>
 
             <div id="menu-horizontal-links" class="collapse border-top border-secondary">
-                <button id="dashboard-horizontal" class="text-light button-menu" onclick="">
+                <button id="dashboard-horizontal" class="text-light button-menu" onclick="loadPage('<?=$_SESSION['client']->rota_raiz?>/painel/dashboard');">
                     <i class="fa fa-chart-line"></i>
                     <span class="">Dashboard<span>
                 </button>
@@ -72,8 +72,11 @@
                         <a href="#" class="text-light d-block p-2 border-bottom border-secondary" onclick="loadPage('<?=$_SESSION['client']->rota_raiz?>/painel/avaliacoes/estabelecimento');">                        
                             Avaliações do estabelecimento
                         </a>
-                        <a href="#" class="text-light d-block p-2" onclick="">
+                        <a href="#" class="text-light d-block p-2 border-bottom border-secondary" onclick="loadPage('<?=$_SESSION['client']->rota_raiz?>/painel/avaliacoes/produtos');">
                             Avaliações dos produtos
+                        </a>
+                        <a href="#" class="text-light d-block p-2" onclick="loadPage('<?=$_SESSION['client']->rota_raiz?>/painel/avaliacoes/mediaprodutos');">
+                            Média das avaliações dos produtos
                         </a>
                 </div>
                 
@@ -119,7 +122,7 @@
                     </div>
                 </div>
                 
-                <a id="dashboard-vertical" class="text-light button-menu" onclick="">
+                <a id="dashboard-vertical" class="text-light button-menu" onclick="loadPage('<?=$_SESSION['client']->rota_raiz?>/painel/dashboard');">
                     <i class="fa fa-chart-line"></i>
                     <span class="">Dashboard<span>
                 </a>
@@ -132,8 +135,11 @@
                         <a href="#" id="avaliacoes-estab-vertical" class="text-light d-block p-1 border-bottom border-secondary" onclick="loadPage('<?=$_SESSION['client']->rota_raiz?>/painel/avaliacoes/estabelecimento');">                        
                             Avaliações do estabelecimento
                         </a>
-                        <a href="#" id="avaliacoes-prod-vetical" class="text-light d-block p-1" onclick="">
+                        <a href="#" id="avaliacoes-prod-vetical" class="text-light d-block p-1 border-bottom border-secondary" onclick="loadPage('<?=$_SESSION['client']->rota_raiz?>/painel/avaliacoes/produtos');">
                             Avaliações dos produtos
+                        </a>
+                        <a href="#" class="text-light d-block p-1" onclick="loadPage('<?=$_SESSION['client']->rota_raiz?>/painel/avaliacoes/mediaprodutos');">
+                            Média das avaliações dos produtos
                         </a>
                 </div>
                 

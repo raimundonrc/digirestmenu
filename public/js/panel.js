@@ -1,5 +1,4 @@
-
-function searchAvalEstabByDate(){
+function searchAvalEstabByDate(){//Busca as avaliações do estabelecimento
     //Evento do botão de pesquisa de avaliação estabelecimento
     let btnSearchAvalEstab = document.querySelector('#btn-search-avalEstab');
     
@@ -38,6 +37,96 @@ function searchAvalEstabByDate(){
         
         if(status === 'success'){
             conteudo.innerHTML = response;
+        }
+    })
+    .fail(function(jqXHR, textStatus, msg){//Erro.
+        $('#modal-erro-dados').modal('show');//Chama o modal de erro
+    });
+}
+
+function searchAvalProdByDate(){//Busca as avaliações de produtos
+    //Evento do botão de pesquisa de avaliação de produtos
+    let btnSearchAvalProd = document.querySelector('#btn-search-avalProd');
+    
+    //Inputs
+    let dataInicio = document.querySelector('#avalProd-data-inicio');
+    let dataFim = document.querySelector('#avalProd-data-fim');
+    let subgrupo = document.querySelector('#avalProd-subgrupo');
+    let produto = document.querySelector('#avalProd-produto');
+    let organizar = document.querySelector('#avalProd-organizar');
+
+    //Validações
+    let validInicio = dataInicio.value != '';
+    let validFim = dataFim.value != '';
+    let validIntervalo = dataInicio.value <= dataFim.value;
+    //Mensagens de erro
+    document.querySelector('#erro-data-inicio').innerHTML = !validInicio ? 'Data início inválida.' : '';
+    document.querySelector('#erro-data-fim').innerHTML = !validFim ? 'Data fim inválida.' : '';
+    document.querySelector('#erro-datas').innerHTML = !validIntervalo ? 'A data início tem que ser menor ou igual a data final.' : '';
+    //Se houver erro, finaliza a função
+    if(!validInicio || !validInicio || !validIntervalo) return false;
+    
+    let conteudo = document.querySelector('#conteudo');
+
+    if(document.querySelector('#img-loading')){
+        conteudo.removeChild(document.querySelector('#img-loading'));
+    }
+    let url = btnSearchAvalProd.dataset.url;
+    let data = {
+        "data_inicio": dataInicio.value, 
+        "data_fim": dataFim.value, 
+        "subgrupo": subgrupo.value, 
+        "produto": produto.value, 
+        "organizar": organizar.value
+    };
+    let img = document.createElement('img');
+    img.id="img-loading";
+    img.height = '20';
+    img.src = '../img/loading.gif';
+    img.className = 'img-loading';        
+
+    conteudo.prepend(img);
+    $.post(url, data, (response, status)=>{
+        
+        if(status === 'success'){
+            conteudo.innerHTML = response;
+            getItensSelect(produto.value);           
+        }
+    })
+    .fail(function(jqXHR, textStatus, msg){//Erro.
+        $('#modal-erro-dados').modal('show');//Chama o modal de erro
+    });
+}
+function searchAvalMediaProd(){//Busca as avaliações de produtos
+    //Evento do botão de pesquisa de avaliação de produtos
+    let btnSearchAvalProd = document.querySelector('#btn-search-avalProd');
+    
+    //Inputs
+    let subgrupo = document.querySelector('#avalProd-subgrupo');
+    let produto = document.querySelector('#avalProd-produto');
+    
+    let conteudo = document.querySelector('#conteudo');
+
+    if(document.querySelector('#img-loading')){
+        conteudo.removeChild(document.querySelector('#img-loading'));
+    }
+    let url = btnSearchAvalProd.dataset.url;
+    let data = {
+        "subgrupo": subgrupo.value, 
+        "produto": produto.value
+    };
+    let img = document.createElement('img');
+    img.id="img-loading";
+    img.height = '20';
+    img.src = '../img/loading.gif';
+    img.className = 'img-loading';        
+
+    conteudo.prepend(img);
+    $.post(url, data, (response, status)=>{
+        
+        if(status === 'success'){
+            conteudo.innerHTML = response;
+            getItensSelect(produto.value);           
         }
     })
     .fail(function(jqXHR, textStatus, msg){//Erro.
@@ -320,4 +409,19 @@ function changeHorarioFim(){
     if(hora2.value < hora1.value){        
         hora1.value = hora2.value;
     }
+}
+
+function getItensSelect(selected = 'todos'){//Altera os options do select de filtro de avaliação dos itens
+    let subgrupo = document.querySelector('#avalProd-subgrupo');
+    let url = subgrupo.dataset.url;
+    let param = `id=${subgrupo.value}&selected=${selected}`;
+    request = new XMLHttpRequest();
+    request.open('post', url);
+    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    request.onreadystatechange = () => { 
+        if(request.readyState === 4 && request.status === 200){
+            document.querySelector('#avalProd-produto').innerHTML = request.responseText;
+        }
+    }
+    request.send(param);
 }

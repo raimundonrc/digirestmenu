@@ -2,6 +2,7 @@
     namespace App\Controllers;
     use App\Models\Painel\Reservas;
     use App\Models\Painel\AvaliacoesEstabelecimento;
+    use App\Models\Painel\AvaliacaoPrato;
     use App\Models\Painel\Subgrupos;  
     use App\Models\Painel\Itens;  
     use App\Models\Painel\Estabelecimento;
@@ -40,7 +41,7 @@
 
             $estab = $estabelecimento->getAll();
             //Define a rota a ser chamado via ajax
-            $_SESSION['route'] = isset($_SESSION['route']) ? $_SESSION['route'] : $_SESSION['client']->rota_raiz.'/painel/reserva';
+            $_SESSION['route'] = isset($_SESSION['route']) ? $_SESSION['route'] : $_SESSION['client']->rota_raiz.'/painel/dashboard';
             require '../digirestmenu/app/Views/Painel/painel.phtml';        
         }
 
@@ -61,8 +62,11 @@
 
             $reservas = new Reservas;
             $avalEstab = new AvaliacoesEstabelecimento;
-            $reservas->__set('data_reserva', /* Date('Y-m-d') */'2020-11-17');
+            $avalPrato = new AvaliacaoPrato;
+            $reservas->__set('data_reserva', Date('Y-m-d'));
             $reserva = $reservas->getAll();
+            $avaliacoesEstab = $avalEstab->getLimit6();
+            $avaliacoesPrato = $avalPrato->getLimit6();
 
             require '../digirestmenu/app/Views/Painel/dashboard.phtml';
         }
@@ -79,7 +83,7 @@
             $avalEstab = new avaliacoesEstabelecimento;
             $average = $avalEstab->getAverage();
 
-            if($_POST){
+            if($_POST){//Acesso via post
                 //Validar os dados
                 $validDataInicio = isset($_POST['data_inicio']) && $_POST['data_inicio'] != '' ? true : false;
                 $validDataFim = isset($_POST['data_fim']) && $_POST['data_fim'] != '' ? true : false;
@@ -94,20 +98,52 @@
                 $avaliacoes = $avalEstab->getByDate($_POST['data_inicio'], $_POST['data_fim'], $_POST['organizar']);
             }            
 
-            if($_GET){
+            if($_SERVER['REQUEST_METHOD'] == 'GET'){//Acesso via get
                 $avaliacoes = $avalEstab->getByDate(Date('Y-m-d'), Date('Y-m-d'), 'recente');
             } 
 
             require_once '../digirestmenu/app/Views/Painel/avaliacoesEstabelecimento.phtml';
         }
 
-        public function avaliacoesProdutos(){//Chama a página de avaliações dos produtos
-            
+        public function avaliacoesProdutos(){//Chama a página de avaliações dos produtos            
             //verifica se está logado
             if(!(isset($_SESSION['rota_raiz']) && $_SESSION['rota_raiz'] === $_SESSION['client']->rota_raiz)){
                 header('Location:'.$_SESSION['client']->rota_raiz.'/painel');
                 return false;
             }
+            
+            $avalPrato = new AvaliacaoPrato;
+            $subgrupos = new Subgrupos;
+            $sub = $subgrupos->getAll();
+
+            if($_POST){//Acesso via post
+                //Validar os dados
+                $validDataInicio = isset($_POST['data_inicio']) && $_POST['data_inicio'] != '' ? true : false;
+                $validDataFim = isset($_POST['data_fim']) && $_POST['data_fim'] != '' ? true : false;
+                $validOrganizar = isset($_POST['organizar']) && $_POST['organizar'] != '' ? true : false;
+                $validIntervalo = isset($_POST['data_inicio']) && isset($_POST['data_fim']) && Date($_POST['data_inicio']) <= Date($_POST['data_fim']) ? true : false;
+
+                if(!($validDataInicio && $validDataFim && $validOrganizar && $validIntervalo)){
+                    echo '<h4 style="color: #ff0000">Dados incorretos. Por gentileza, verifique os dados e tente novamente.</h4>';
+                    require_once '../digirestmenu/app/Views/Painel/avaliacoesEstabelecimento.phtml';
+                    return false;
+                }
+
+                if($_POST['subgrupo'] != 'todos' && $_POST['produto'] != 'todos'){//Filtro por produto
+                    $avalPrato->__set('id_item', $_POST['produto']);
+                    $avaliacoes = $avalPrato->getByItemDate($_POST['data_inicio'], $_POST['data_fim'], $_POST['organizar']);
+                } else if($_POST['subgrupo'] != 'todos' && $_POST['produto'] == 'todos'){//Filtro por subgrupo
+                    $avaliacoes = $avalPrato->getBySubgrupoDate($_POST['data_inicio'], $_POST['data_fim'], $_POST['organizar'], $_POST['subgrupo']);
+                } else {
+                    $avaliacoes = $avalPrato->getByDate($_POST['data_inicio'], $_POST['data_fim'], $_POST['organizar']);
+                }
+            }            
+
+            if($_SERVER['REQUEST_METHOD'] == 'GET'){//Acesso via get
+                $avaliacoes = $avalPrato->getByDate(Date('Y-m-d'), Date('Y-m-d'), 'recente');
+            }
+
+
             require '../digirestmenu/app/Views/Painel/avaliacoesProdutos.phtml';
         }
 
@@ -1066,6 +1102,50 @@
 
             $_SESSION['route'] = $_SESSION['client']->rota_raiz.'/painel/estabelecimento';            
             header('Location:'.$_SESSION['client']->rota_raiz.'/painel');
+        }
+    
+        public function getItensOption(){
+            //verifica se está logado
+            if(!(isset($_SESSION['rota_raiz']) && $_SESSION['rota_raiz'] === $_SESSION['client']->rota_raiz)){
+                header('Location:'.$_SESSION['client']->rota_raiz.'/painel');
+                return false;
+            }
+            if(!$_POST['id']){
+               echo 'ID do subgrupo não existe ou não foi informado.';
+               return false;
+            }       
+            $itens = new Itens;  
+            $itens->__set('id_subgrupo', $_POST['id']);
+            $item = $itens->getBySubgrupo(); 
+            require_once '../digirestmenu/app/Views/Painel/itensOption.phtml';          
+        }
+
+        public function mediaAvaliacoesProdutos(){
+            //verifica se está logado
+            if(!(isset($_SESSION['rota_raiz']) && $_SESSION['rota_raiz'] === $_SESSION['client']->rota_raiz)){
+                header('Location:'.$_SESSION['client']->rota_raiz.'/painel');
+                return false;
+            }
+            
+            $avalPrato = new AvaliacaoPrato;
+            $subgrupos = new Subgrupos;
+            $sub = $subgrupos->getAll();
+
+            if($_POST){//Acesso via post                
+                if($_POST['subgrupo'] != 'todos' && $_POST['produto'] != 'todos'){//Filtro por produto
+                    $avalPrato->__set('id_item', $_POST['produto']);
+                    $avaliacoes = $avalPrato->getAverageByItem();
+                } else if($_POST['subgrupo'] != 'todos' && $_POST['produto'] == 'todos'){//Filtro por subgrupo
+                    $avaliacoes = $avalPrato->getAverageBySubgrupo($_POST['subgrupo']);
+                } else {
+                    $avaliacoes = $avalPrato->getAverageAll();
+                }
+            }            
+
+            if($_SERVER['REQUEST_METHOD'] == 'GET'){//Acesso via get
+                $avaliacoes = $avalPrato->getAverageAll();
+            }
+            require_once '../digirestmenu/app/Views/Painel/mediaAvaliacoesProdutos.phtml';
         }
     }
 ?>
