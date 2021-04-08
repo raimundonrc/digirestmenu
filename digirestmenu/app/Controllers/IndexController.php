@@ -30,23 +30,33 @@
 
             $client = json_decode($_POST['client']);
             $avaliacao = json_decode($_POST['aval']);
-
             $clientes = new Clientes;
             $avalEstab = new AvaliacoesEstabelecimento;
             
             $clientes->__set('nome', $client->nomeCliente);
             $clientes->__set('email', $client->email);
-            $clientes->__set('telefone', $client->telefone);  
-            if($clientes->insertClient()){//sucesso
-                $clientes->__set('email', $client->email);
-                $last = $clientes->getByEmail();
-                $avalEstab->__set('id_cliente', $last->id);
-                $avalEstab->__set('nota_avaliacao', $avaliacao->nota);
-                $avaliacao->comentarioRestaurante != '' ? $avalEstab->__set('comentario', $avaliacao->comentarioRestaurante) : $avalEstab->__set('comentario', null);  
-                if($avalEstab->insertAvaliacao()){//sucesso
-                    return $clientes->getByEmail();
+            $clientes->__set('telefone', $client->telefone); 
+            $cl = $clientes->getByEmail();
+            if(!$cl) {//Cliente ainda não está cadastrado
+                if($clientes->insertClient()){//sucesso
+                    $clientes->__set('email', $client->email);
+                    $last = $clientes->getByEmail();
+                    $avalEstab->__set('id_cliente', $last->id);
+                    $avalEstab->__set('nota_avaliacao', $avaliacao->nota);
+                    $avaliacao->comentarioRestaurante != '' ? 
+                        $avalEstab->__set('comentario', $avaliacao->comentarioRestaurante) : 
+                        $avalEstab->__set('comentario', null);  
+                    $avalEstab->insertAvaliacao();
+                    echo json_encode(["status" => "success"]);                    
+                    return true;
+                } else {
+                    echo json_encode(["status" => "fail"]);
+                    return false;
                 }
-            } 
+            } else {// cliente já está cadastrado                
+                echo json_encode(["status" => "fail"]);
+                return false;
+            }
         }
 
         public function insertClienteAvaliacaoPrato(){
@@ -64,15 +74,26 @@
             $clientes->__set('nome', $client->nomeCliente);
             $clientes->__set('email', $client->email);
             $clientes->__set('telefone', $client->telefone);  
-            if($clientes->insertClient()){
-                $clientes->__set('email', $client->email);
-                $last = $clientes->getByEmail();                
-                $avalPrato->__set('id_cliente', $last->id);
-                $avalPrato->__set('id_item', $avaliacao->id);
-                $avalPrato->__set('nota_avaliacao', $avaliacao->nota);
-                $avaliacao->comentarioPrato != '' ? $avalPrato->__set('comentario', $avaliacao->comentarioPrato) : $avalPrato->__set('comentario', null); 
-                $avalPrato->insertAvaliacao();
-            } 
+            $cl = $clientes->getByEmail();
+            if(!$cl) {//Cliente ainda não está cadastrado
+                if($clientes->insertClient()){
+                    $clientes->__set('email', $client->email);
+                    $last = $clientes->getByEmail();                
+                    $avalPrato->__set('id_cliente', $last->id);
+                    $avalPrato->__set('id_item', $avaliacao->id);
+                    $avalPrato->__set('nota_avaliacao', $avaliacao->nota);
+                    $avaliacao->comentarioPrato != '' ? $avalPrato->__set('comentario', $avaliacao->comentarioPrato) : $avalPrato->__set('comentario', null); 
+                    $avalPrato->insertAvaliacao();
+                    echo json_encode(["status" => "success"]);                    
+                    return true;
+                } else {
+                    echo json_encode(["status" => "fail"]);
+                return false;
+                }
+            } else {// cliente já está cadastrado                
+                echo json_encode(["status" => "fail"]);
+                return false;
+            }
         }
 
         public function insertAvaliacaoEstab(){

@@ -460,6 +460,8 @@ function addProdutoModal(nomeProduto, urlImg, idProduto){
 
 //Envia os dados de cadastro de cliente e avaliação restaurante
 function enviarDadosEstabCadastro(url){ 
+    document.querySelector('#email-exist-error').classList.add('d-none');//Oculta a mensagem de email já existe
+
     let inputEstabNome = document.querySelector('#estab-nome');    
     let inputEstabEmail = document.querySelector('#estab-email');    
     let inputEstabTelefone = document.querySelector('#estab-telefone');
@@ -519,21 +521,32 @@ function enviarDadosEstabCadastro(url){
 
     $.post(url, dados, function(response, status){//Enviando os dados via post
         if(status === 'success'){//Sucesso
-            localStorage.setItem('_cliente_', cliente.email);
-            $('#modal-sucesso-restaurante').modal('show');//Chama o modal de sucesso
+            let statusResponse;
+            try{
+                statusResponse = JSON.parse(response);
+            }catch{
+                $('#modal-erro').modal('show'); //Chama o modal de erro 
+            }
+            if(statusResponse.status == 'success'){//Email informado não está cadastrado
+                localStorage.setItem('_cliente_', cliente.email);
+                $('#modal-sucesso-restaurante').modal('show');//Chama o modal de sucesso
+                $('#modal-dados-cliente-estabelecimento').modal('hide'); //Fecha o modal de input dos dados do cliente
+            } else {//Email informado já está cadastrado
+                document.querySelector('#email-exist-error').classList.remove('d-none');//exibe a mensagem de email já existe
+            }
             console.log(response);
         }
     })
-
     .fail(function(jqXHR, textStatus, msg){//Erro.
         $('#modal-erro').modal('show'); //Chama o modal de erro
     });
-
-    $('#modal-dados-cliente-estabelecimento').modal('hide'); //Fecha o modal de input dos dados do cliente
+    
 }
 
 //Envia os dados de cadastro de cliente e avaliação prato
 function enviarDadosPratoCadastro(url){ 
+    document.querySelector('#email-exist-error-prato').classList.add('d-none');//Oculta a mensagem de email já existe
+
     let inputPratoNome = document.querySelector('#pratoNome');    
     let inputPratoEmail = document.querySelector('#pratoEmail');    
     let inputPratoTelefone = document.querySelector('#pratoTelefone');
@@ -561,8 +574,8 @@ function enviarDadosPratoCadastro(url){
     }
 
     if(!validEmail){        
-        erroEstabEmail.innerHTML = 'Por gentileza, informe um e-mail válido';
-        inputEstabEmail.classList.add('is-invalid');
+        erroPratoEmail.innerHTML = 'Por gentileza, informe um e-mail válido';
+        inputPratoEmail.classList.add('is-invalid');
     } else {
         erroPratoEmail.innerHTML = '';
         inputPratoEmail.classList.add('is-valid');
@@ -589,21 +602,30 @@ function enviarDadosPratoCadastro(url){
     //Trasforma em json
     let aval = JSON.stringify(avaliacaoPrato);;
     let client = JSON.stringify(cliente);
-    let dados = {aval, client};
+    let dados = {aval, client};    
 
     $.post(url, dados, function(response, status){//Enviando os dados via post
         if(status === 'success'){//Sucesso
-            localStorage.setItem('_cliente_', cliente.email);
-            $('#modal-sucesso-restaurante').modal('show');//Chama o modal de sucesso
+            let statusResponse;
+            try{
+                statusResponse = JSON.parse(response);
+            }catch{
+                $('#modal-erro').modal('show'); //Chama o modal de erro 
+            }
+            if(statusResponse.status == 'success'){//Email informado não está cadastrado
+                localStorage.setItem('_cliente_', cliente.email);
+                $('#modal-dados-cliente-prato').modal('hide'); //Fecha o modal de input dos dados do cliente
+                $('#modal-sucesso-restaurante').modal('show');//Chama o modal de sucesso
+            } else {//Email informado já está cadastrado
+                document.querySelector('#email-exist-error-prato').classList.remove('d-none');//exibe a mensagem de email já existe
+            }
             console.log(response);
         }
     })
 
     .fail(function(jqXHR, textStatus, msg){//Erro.
         $('#modal-erro').modal('show'); //Chama o modal de erro
-    });
-
-    $('#modal-dados-cliente-prato').modal('hide'); //Fecha o modal de input dos dados do cliente
+    });   
 }
 
 function enviarDadosAvaliacao(){
@@ -620,7 +642,6 @@ function enviarDadosAvaliacao(){
             console.log(response);
         }
     })
-
     .fail(function(jqXHR, textStatus, msg){//Erro.
         $('#modal-erro').modal('show'); //Chama o modal de erro
         $('#modal-email-estab').modal('hide');

@@ -40,7 +40,7 @@
                 INNER JOIN 
                     tb_itens AS ti ON(tai.id_item = ti.id)
                 WHERE 
-                tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim ORDER BY tai.data_criacao DESC
+                tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim AND ti.ativo = TRUE AND ti.deleted = FALSE ORDER BY tai.data_criacao DESC
             ';
 
             if($organizar == 'recente'){
@@ -54,7 +54,7 @@
                     INNER JOIN 
                         tb_itens AS ti ON(tai.id_item = ti.id)
                     WHERE 
-                    tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim ORDER BY tai.data_criacao DESC
+                    tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim AND ti.ativo = TRUE AND ti.deleted = FALSE ORDER BY tai.data_criacao DESC
                 ';
             }
             if($organizar == 'antigo'){
@@ -68,7 +68,7 @@
                     INNER JOIN 
                         tb_itens AS ti ON(tai.id_item = ti.id)
                     WHERE 
-                    tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim ORDER BY tai.data_criacao ASC
+                    tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim AND ti.ativo = TRUE AND ti.deleted = FALSE ORDER BY tai.data_criacao ASC
                 ';
             }
             if($organizar == 'bem_avaliado'){
@@ -82,7 +82,7 @@
                     INNER JOIN 
                         tb_itens AS ti ON(tai.id_item = ti.id)
                     WHERE 
-                    tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim ORDER BY tai.nota_avaliacao DESC
+                    tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim AND ti.ativo = TRUE AND ti.deleted = FALSE ORDER BY tai.nota_avaliacao DESC
                 ';
             }
             if($organizar == 'menos_avaliado'){
@@ -96,7 +96,7 @@
                     INNER JOIN 
                         tb_itens AS ti ON(tai.id_item = ti.id)
                     WHERE 
-                    tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim ORDER BY tai.nota_avaliacao ASC
+                    tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim AND ti.ativo = TRUE AND ti.deleted = FALSE ORDER BY tai.nota_avaliacao ASC
                 ';
             } 
 
@@ -119,7 +119,7 @@
                 INNER JOIN 
                     tb_itens AS ti ON(tai.id_item = ti.id)
                 WHERE 
-                tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim AND tai.id_item IN(:id_item)  ORDER BY tai.data_criacao DESC
+                tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim AND tai.id_item IN(:id_item) AND ti.ativo = TRUE AND ti.deleted = FALSE ORDER BY tai.data_criacao DESC
             ';
 
             if($organizar == 'recente'){
@@ -133,7 +133,7 @@
                     INNER JOIN 
                         tb_itens AS ti ON(tai.id_item = ti.id)
                     WHERE 
-                    tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim AND tai.id_item IN(:id_item) ORDER BY tai.data_criacao DESC
+                    tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim AND tai.id_item IN(:id_item) AND ti.ativo = TRUE AND ti.deleted = FALSE ORDER BY tai.data_criacao DESC
                 ';
             }
             if($organizar == 'antigo'){
@@ -147,7 +147,7 @@
                     INNER JOIN 
                         tb_itens AS ti ON(tai.id_item = ti.id)
                     WHERE 
-                    tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim AND tai.id_item IN(:id_item) ORDER BY tai.data_criacao ASC
+                    tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim AND tai.id_item IN(:id_item) AND ti.ativo = TRUE AND ti.deleted = FALSE ORDER BY tai.data_criacao ASC
                 ';
             }
             if($organizar == 'bem_avaliado'){
@@ -161,7 +161,7 @@
                     INNER JOIN 
                         tb_itens AS ti ON(tai.id_item = ti.id)
                     WHERE 
-                    tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim AND tai.id_item IN(:id_item) ORDER BY tai.nota_avaliacao DESC
+                    tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim AND tai.id_item IN(:id_item) AND ti.ativo = TRUE AND ti.deleted = FALSE ORDER BY tai.nota_avaliacao DESC
                 ';
             }
             if($organizar == 'menos_avaliado'){
@@ -175,7 +175,7 @@
                     INNER JOIN 
                         tb_itens AS ti ON(tai.id_item = ti.id)
                     WHERE 
-                    tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim AND tai.id_item IN(:id_item) ORDER BY tai.nota_avaliacao ASC
+                    tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim AND tai.id_item IN(:id_item) AND ti.ativo = TRUE AND ti.deleted = FALSE ORDER BY tai.nota_avaliacao ASC
                 ';
             } 
 
@@ -199,7 +199,7 @@
                 INNER JOIN 
                     tb_itens AS ti ON(tai.id_item = ti.id)
                 WHERE 
-                tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim AND ti.id_subgrupo IN(:id_subgrupo) ORDER BY tai.data_criacao DESC
+                tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim AND ti.id_subgrupo IN(:id_subgrupo) AND ti.ativo = TRUE AND ti.deleted = FALSE ORDER BY tai.data_criacao DESC
             ';
 
             if($organizar == 'recente'){
@@ -213,7 +213,7 @@
                     INNER JOIN 
                         tb_itens AS ti ON(tai.id_item = ti.id)
                     WHERE 
-                    tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim AND ti.id_subgrupo IN(:id_subgrupo) ORDER BY tai.data_criacao DESC
+                    tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim AND ti.id_subgrupo IN(:id_subgrupo) AND ti.ativo = TRUE AND ti.deleted = FALSE ORDER BY tai.data_criacao DESC
                 ';
             }
             if($organizar == 'antigo'){
@@ -227,7 +227,7 @@
                     INNER JOIN 
                         tb_itens AS ti ON(tai.id_item = ti.id)
                     WHERE 
-                    tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim AND ti.id_subgrupo IN(:id_subgrupo) ORDER BY tai.data_criacao ASC
+                    tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim AND ti.id_subgrupo IN(:id_subgrupo) AND ti.ativo = TRUE AND ti.deleted = FALSE ORDER BY tai.data_criacao ASC
                 ';
             }
             if($organizar == 'bem_avaliado'){
@@ -241,7 +241,7 @@
                     INNER JOIN 
                         tb_itens AS ti ON(tai.id_item = ti.id)
                     WHERE 
-                    tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim AND ti.id_subgrupo IN(:id_subgrupo) ORDER BY tai.nota_avaliacao DESC
+                    tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim AND ti.id_subgrupo IN(:id_subgrupo) AND ti.ativo = TRUE AND ti.deleted = FALSE ORDER BY tai.nota_avaliacao DESC
                 ';
             }
             if($organizar == 'menos_avaliado'){
@@ -255,7 +255,7 @@
                     INNER JOIN 
                         tb_itens AS ti ON(tai.id_item = ti.id)
                     WHERE 
-                    tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim AND ti.id_subgrupo IN(:id_subgrupo) ORDER BY tai.nota_avaliacao ASC
+                    tai.data_criacao >= :data_inicio AND tai.data_criacao <= :data_fim AND ti.id_subgrupo IN(:id_subgrupo) AND ti.ativo = TRUE AND ti.deleted = FALSE ORDER BY tai.nota_avaliacao ASC
                 ';
             } 
 
@@ -277,7 +277,7 @@
                 INNER JOIN 
                     tb_itens AS ti ON(tai.id_item = ti.id)
                 WHERE 
-                    tai.id_item IN(:id_item)
+                    tai.id_item IN(:id_item) AND ti.ativo = TRUE AND ti.deleted = FALSE
             ';
             $con = new Connection;
             $stmt = $con->connect()->prepare($query);
@@ -298,7 +298,7 @@
                 FROM 
                     tb_itens 
                 WHERE 
-                    id_subgrupo IN(:id_subgrupo)
+                    id_subgrupo IN(:id_subgrupo) AND ativo = TRUE AND deleted = FALSE
                 ORDER BY nome ASC
             ';
             $stmt = $con->connect()->prepare($query);
@@ -317,7 +317,7 @@
                     INNER JOIN 
                         tb_itens AS ti ON(tai.id_item = ti.id)
                     WHERE 
-                        tai.id_item IN(:id_item)                
+                        tai.id_item IN(:id_item) AND ti.ativo = TRUE AND ti.deleted = FALSE               
                 ';
                 $con = new Connection;
                 $stmt = $con->connect()->prepare($query2);
@@ -340,6 +340,8 @@
                     id 
                 FROM 
                     tb_itens 
+                WHERE
+                    ativo = TRUE AND deleted = FALSE
                 ORDER BY nome ASC
             ';
             $stmt = $con->connect()->prepare($query);
@@ -357,7 +359,7 @@
                     INNER JOIN 
                         tb_itens AS ti ON(tai.id_item = ti.id)
                     WHERE 
-                        tai.id_item IN(:id_item)
+                        tai.id_item IN(:id_item) AND ti.ativo = TRUE AND ti.deleted = FALSE
                 ';
                 $con = new Connection;
                 $stmt = $con->connect()->prepare($query2);
@@ -381,6 +383,8 @@
                     tb_clientes AS tc ON(tai.id_cliente = tc.id) 
                 INNER JOIN 
                     tb_itens AS ti ON(tai.id_item = ti.id)
+                WHERE
+                    ti.ativo = TRUE AND ti.deleted = FALSE
                 ORDER BY tai.data_criacao DESC LIMIT 6
             ';
             $con = new Connection;

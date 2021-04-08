@@ -24,7 +24,7 @@
                     tae.nota_avaliacao, tae.comentario, DATE_FORMAT(tae.data_criacao, "%d/%m/%Y") AS data_avaliacao, tc.nome 
                 FROM 
                     tb_avaliacoes_estabelecimento AS tae INNER JOIN tb_clientes AS tc ON(tae.id_cliente = tc.id)
-                ORDER BY data_avaliacao DESC LIMIT 6;
+                ORDER BY tae.data_criacao DESC LIMIT 6;
             ';
             $con = new Connection;
             $stmt = $con->connect()->prepare($query);

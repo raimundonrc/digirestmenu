@@ -26,8 +26,8 @@
 </head>
 <body id="index">
     <header class="<?php echo count($itensDestaque) < 1 ? '' : 'h-40v' ?>">
-        <div class="bg-dark d-flex px-3 py-1 justify-content-center">
-            <button id="btn-avaliacao-estab" class="text-light mr-5" data-url="<?=$_SESSION['client']->rota_raiz?>/avaliacao/estabelecimento/procuracadastro">
+        <div class="bg-dark d-flex py-1 justify-content-center">
+            <button id="btn-avaliacao-estab" class="text-light mr-4" data-url="<?=$_SESSION['client']->rota_raiz?>/avaliacao/estabelecimento/procuracadastro">
                 Avaliar Restaurante
             </button>            
             <a href="<?=$_SESSION['client']->rota_raiz?>/reservas" class="text-light" target="_blank">Fazer uma reserva</a>
@@ -310,6 +310,7 @@
                     </div> 
                     <div class="pb-2">
                         <input id="pratoEmail" type="email" placeholder="E-mail" class="form-control">
+                        <span id="email-exist-error-prato" class="text-danger d-none">O e-mail informado já está cadastrado.</span>
                         <span id="erro-prato-email" class="text-danger d-inline-block py-2"></span>
                     </div>
                     <div class="pb-2">
@@ -345,6 +346,7 @@
                     <span id="erro-estab-nome" class="text-danger d-inline-block py-2"></span>
                     <div>
                         <input id="estab-email" type="email" placeholder="E-mail" class="form-control">
+                        <span id="email-exist-error" class="text-danger d-none">O e-mail informado já está cadastrado.</span>
                     </div>
                     <span id="erro-estab-email" class="text-danger d-inline-block py-2"></span>
                     <div>

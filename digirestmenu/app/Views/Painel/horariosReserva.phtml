@@ -5,18 +5,11 @@
         <?php 
             foreach($bloqueio as $blo){
                 if($hora == $blo){
-                    echo 'disabled';
+                    echo 'disabled ';
                 }
             }
         ?>
     >
-        <?= $hora ?>
-        <?php 
-            foreach($bloqueio as $blo){
-                if($hora == $blo){
-                    echo 'Indisponível';
-                }
-            }
-        ?>
+        <?= $hora ?>        
     </option> 
 <?php }?>

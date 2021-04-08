@@ -11,6 +11,7 @@
         private $foto;
         private $destaque;
         private $ativo;
+        private $deleted;
         private $data_criacao;
         private $data_update;
 
@@ -23,7 +24,7 @@
         }
 
         public function getAll(){
-            $query = 'SELECT id, nome, descricao, preco, id_subgrupo, foto, destaque, ativo, data_criacao, data_update FROM tb_itens ORDER BY ativo DESC, nome ASC';
+            $query = 'SELECT id, nome, descricao, preco, id_subgrupo, foto, destaque, ativo, data_criacao, data_update FROM tb_itens WHERE deleted IN(FALSE) ORDER BY ativo DESC, nome ASC';
 
             $con = new Connection;
 
@@ -33,7 +34,7 @@
         }
 
         public function getAllActive(){
-            $query = 'SELECT id, nome, descricao, preco, id_subgrupo, foto, destaque, ativo, data_criacao, data_update FROM tb_itens WHERE ativo IN(TRUE) ORDER BY nome ASC';
+            $query = 'SELECT id, nome, descricao, preco, id_subgrupo, foto, destaque, ativo, data_criacao, data_update FROM tb_itens WHERE deleted IN(FALSE) AND ativo IN(TRUE) ORDER BY nome ASC';
 
             $con = new Connection;
 
@@ -43,7 +44,7 @@
         }
 
         public function getDestaques(){
-            $query = 'SELECT id, foto FROM tb_itens WHERE destaque IN(TRUE) AND ativo IN(TRUE) ORDER BY nome ASC';
+            $query = 'SELECT id, foto FROM tb_itens WHERE deleted IN(FALSE) AND destaque IN(TRUE) AND ativo IN(TRUE) ORDER BY nome ASC';
             
             $con = new Connection;
 
@@ -53,7 +54,7 @@
         }
 
         public function getBySubgrupo(){
-            $query = 'SELECT id, nome, descricao, preco, id_subgrupo, foto, destaque, ativo, data_criacao, data_update FROM tb_itens WHERE id_subgrupo IN(:id_subgrupo) ORDER BY ativo DESC, nome ASC';
+            $query = 'SELECT id, nome, descricao, preco, id_subgrupo, foto, destaque, ativo, data_criacao, data_update FROM tb_itens WHERE deleted IN(FALSE) AND id_subgrupo IN(:id_subgrupo) ORDER BY ativo DESC, nome ASC';
 
             $con = new Connection;
 
@@ -122,7 +123,7 @@
         }
 
         public function deleteItem(){
-            $query = 'DELETE FROM tb_itens WHERE id IN(:id)';
+            $query = 'UPDATE tb_itens SET deleted = TRUE WHERE id IN(:id)';
 
             $con = new Connection;
 
