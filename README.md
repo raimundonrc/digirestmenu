@@ -1,148 +1,62 @@
-This is a system for digital menu, reservations and reviews for restaurants, bars, cafeterias...
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
 
+<p align="center">
+<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+</p>
 
-HOW TO USE:
+## About Laravel
 
+Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-DATA BASES:
-Important! Each establishment in the system must have a database with a unique name, as the databases are individual for each establishment.
-In addition, there should be a general database to store mainly the name of the databases and the root route of the establishment.
+- [Simple, fast routing engine](https://laravel.com/docs/routing).
+- [Powerful dependency injection container](https://laravel.com/docs/container).
+- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
+- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
+- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
+- [Robust background job processing](https://laravel.com/docs/queues).
+- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
+Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-GENERAL DATABASE TABLES:
-The general database should have a table with the name "digirestmenu_clientes", and the following columns:
-- id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-- estabelecimento VARCHAR(100) NOT NULL,
-- rota_raiz VARCHAR(50) NOT NULL UNIQUE,
-- bd_nome VARCHAR(50) NOT NULL UNIQUE,
-- data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-- data_update DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+## Learning Laravel
 
-Manually fill in the data in this table:
-- estabelecimento => Name of the establishment (Will show on the pages),
-- rota raiz => The name of the establishment root route with "/". Example: /client_name,
-- bd_nome => The name of the customer database
+Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
+If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
-ESTABLISHMENT DATABASE:
-The establishment's database must have the following tables:
-/*****************************************************************************************************
-The following columns in the "tb_establishment" table are mandatory and must be completed manually:
-- estabelecimento => Name of the establishment.
-- rota_raiz => Root route of the establishment. This column defines which route will be released when you log in: Important! The root route must be the same as the root route of the "digirestmenu_clientes" table, otherwise it will not work.
-CREATE ADMIN LOGIN:
-- email => E-mail for the establishment's login.
-- senha => Password for the login of the establishment. Important! The password must be written to the database using MD5 hash.
+## Laravel Sponsors
 
-CREATE TABLE tb_estabelecimento(
-    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    razao_social VARCHAR(200) NULL, 
-    estabelecimento VARCHAR(100) NOT NULL,
-    rota_raiz VARCHAR(50) NOT NULL UNIQUE,
-    email VARCHAR(100) NOT NULL,
-    senha VARCHAR(100) NOT NULL,
-    foto_logo VARCHAR(100) NULL,
-    whatsapp CHAR(15) NULL,
-    instagram VARCHAR(100) NULL,
-    facebook VARCHAR(100) NULL,
-    twitter VARCHAR(100) NULL,
-    tripAdvisor VARCHAR(100) NULL,
-    data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    data_update DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
 
-/*** The tables below will be filled in by the users of the system (Do not require manual filling). ***/
+### Premium Partners
 
-CREATE TABLE tb_reservas(
-	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    id_cliente  INT NULL,
-    nome VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NULL,
-    telefone CHAR(15) NOT NULL,
-    qtd_pessoas INT(3) NOT NULL,
-    data_reserva DATE NOT NULL,
-    hora_reserva TIME NOT NULL,
-    observacao VARCHAR(500) NULL,
-    status_reserva VARCHAR(50) NOT NULL DEFAULT('RESERVADO'),
-    data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    data_update DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_cliente) REFERENCES tb_clientes(id)
-);
+- **[Vehikl](https://vehikl.com/)**
+- **[Tighten Co.](https://tighten.co)**
+- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
+- **[64 Robots](https://64robots.com)**
+- **[Cubet Techno Labs](https://cubettech.com)**
+- **[Cyber-Duck](https://cyber-duck.co.uk)**
+- **[Many](https://www.many.co.uk)**
+- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
+- **[DevSquad](https://devsquad.com)**
+- **[Curotec](https://www.curotec.com/)**
+- **[OP.GG](https://op.gg)**
 
-CREATE TABLE tb_clientes(
-    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    nome  VARCHAR(100) NOT NULL,
-    telefone CHAR(15) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    data_update DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+## Contributing
 
-CREATE TABLE tb_avaliacoes_estabelecimento(
-    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    id_cliente INT NOT NULL,
-    nota_avaliacao  INT(1) NOT NULL,
-    comentario TEXT NULL,
-    data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    data_update DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_cliente) REFERENCES tb_clientes(id)
-);
+Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-CREATE TABLE tb_subgrupos(
-    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    descricao VARCHAR(100) NOT NULL,
-    ordem INT NOT NULL,
-    ativo BOOLEAN NOT NULL DEFAULT TRUE,
-    data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    data_update DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 
-);
+## Code of Conduct
 
-CREATE TABLE tb_itens(
-    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(100) NOT NULL,
-    descricao VARCHAR(500) NULL,
-    preco FLOAT(8,2) NOT NULL,
-    id_subgrupo INT NOT NULL,
-    foto VARCHAR(100) NULL,
-    destaque BOOLEAN NOT NULL DEFAULT FALSE,
-    ativo BOOLEAN NOT NULL DEFAULT TRUE,
-    data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    data_update DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-    FOREIGN KEY (id_subgrupo) REFERENCES tb_subgrupos(id)
-);
+In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-CREATE TABLE tb_horarios_reserva(
-    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    horario_inicio TIME NOT NULL,
-    horario_fim TIME NOT NULL,
-    dia_da_semana CHAR(3) NOT NULL,
-    data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    data_update DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+## Security Vulnerabilities
 
-CREATE TABLE tb_horarios_bloqueio(
-    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    horario_inicio TIME NOT NULL,
-    horario_fim TIME NOT NULL,
-    data_bloqueio DATE NOT NULL,
-    data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    data_update DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-**********************************************************************************************/
+If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
+## License
 
-SET DATABASES CONFIGURATIONS:
-General database:
-Access the DigirestConnection.php file at digirestmenu/vendor/RNF/Connection.
-Establishment database:
-Access the Connection.php file at digirestmenu/vendor/RNF/Connection.
-Important! All establishment databases must have the same password.
-
-
-ACCESS ROUTES IN THE BROWSER:
-All routes are prefixed with the client root route defined in the general database. Example: http://localhost/client_name/cardapio.
-
-Routes for system users:
-Menu - Products menu => /client_name/cardapio
-Reservation - Client bookings for the establishment  => /client_name/reservas
-Administration - Administrator panel with system settings and reports => /client_name/painel
+The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
