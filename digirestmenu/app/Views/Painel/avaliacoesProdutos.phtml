@@ -1,0 +1,116 @@
+<?php 
+    $_SESSION['route'] = $_SESSION['client']->rota_raiz.'/painel/avaliacoes/produtos';
+?>
+<section class="p-3">
+    <h5 class="text-center my-3">Avaliação dos seus produtos</h5>
+    <div class="border-bottom row mx-1 p-2">
+        <div class="col-lg-6">
+            <label class="">Do dia:</label>
+            <input
+                id="avalProd-data-inicio"
+                class="form-control"
+                type="date"
+                value="<?= isset($_POST['data_inicio']) ? $_POST['data_inicio'] : Date('Y-m-d'); ?>" 
+                name="data_inicio"
+            >
+            <span id="erro-data-inicio" class="text-danger"></span>
+        </div>
+        <div class="col-lg-6">
+            <label class="">Ao dia:</label>
+            <input
+                id="avalProd-data-fim"
+                class="form-control"
+                type="date"
+                value="<?= isset($_POST['data_fim']) ? $_POST['data_fim'] : Date('Y-m-d'); ?>"
+                name="data_fim"
+            >
+            <span id="erro-data-fim" class="text-danger"></span>
+        </div>
+        <div id="erro-datas" class="text-danger col-12"></div>
+        <div class="col-md-6 mt-1">
+            <label>Subgrupo:</label>
+            <select
+                id="avalProd-subgrupo" 
+                class="form-control" 
+                data-url="<?= $_SESSION['client']->rota_raiz ?>/painel/itens/options"
+                onchange="getItensSelect();"
+            >
+                <option value="todos">
+                    Todos
+                </option>
+                <?php if(isset($sub)){ ?>
+                    <?php foreach($sub as $value){ ?>
+                        <option value="<?= $value->id ?>" <?php echo isset($_POST['subgrupo']) && $_POST['subgrupo'] == $value->id ? 'selected' : '' ?>>
+                            <?= $value->descricao ?>
+                        </option>
+                    <?php } ?>
+                <?php } ?>
+            </select>
+        </div>
+        <div class="col-md-6 mt-1">
+            <label>Produto:</label>
+            <select id="avalProd-produto" class="form-control">
+                <option value="todos">Todos</option>
+            </select>
+        </div>
+        <div class="col-md-6 mt-1">
+            <label>Organizar por:</label>
+            <select id="avalProd-organizar" class="form-control">
+                <option value="recente" <?= isset($_POST['organizar']) && $_POST['organizar'] == 'recente' ? 'selected' : '' ?>>
+                    Mais recente
+                </option>
+                <option value="antigo" <?= isset($_POST['organizar']) && $_POST['organizar'] == 'antigo' ? 'selected' : '' ?>>
+                    Mais antigo
+                </option>
+                <option value="bem_avaliado" <?= isset($_POST['organizar']) && $_POST['organizar'] == 'bem_avaliado' ? 'selected' : '' ?>>
+                    Mais bem avaliado
+                </option>
+                <option value="menos_avaliado" <?= isset($_POST['organizar']) && $_POST['organizar'] == 'menos_avaliado' ? 'selected' : '' ?>>
+                    Menos bem avaliado
+                </option>
+            </select>
+        </div>
+        <div class="mt-2 col-sm-6 d-flex justify-content-end">
+            <button id="btn-search-avalProd" onclick="searchAvalProdByDate();" data-url="<?= $_SESSION['client']->rota_raiz ?>/painel/avaliacoes/produtos" class="text-light d-flex justify-content-center align-items-center btn btn-primary">
+                <i class="fa fa-search fa-2x d-block"></i>
+                <span class="d-block">Pesquisar</span>
+            </button>
+        </div>
+    </div>
+    <?php if(isset($avaliacoes) && count($avaliacoes) > 0){ ?>
+        <div class="row px-3 justify-content-between mt-2">
+            <?php foreach($avaliacoes as $value){ ?>
+                <div class="col-lg-5 border-bottom p-2 mb-2">
+                    <p><?=$value->data_avaliacao?></p>                        
+                    <h5><?=$value->nome_item?></h5>                        
+                    <h6><?=$value->nome_cliente?></h6>                        
+                    <div class="m-1">
+                        <?php for($i = 1; $i <= 5; $i++){ ?>
+                            <?php if($i <= $value->nota_avaliacao){ ?>
+                                <i class="fas fa-star text-warning"></i>
+                            <?php } else {?>
+                                <i class="fa fa-star-o text-warning"></i>
+                            <?php } ?>
+                        <?php } ?>
+                        <span class="ml-2"><?= number_format($value->nota_avaliacao, 2) ?></span>
+                    </div>
+                    <p class="text-secondary"><?php echo $value->comentario ? '"'.$value->comentario.'"' : '';?> </p>
+                </div>
+            <?php } ?>
+        </div>
+    <?php } else {?>
+        <h4 class="text-secondary py-3">Nenhuma avaliação no período informado.</h4>
+    <?php }?>
+</section>
+<aside class="modal" id="modal-erro-dados">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" data-toggle="modal">x</button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-danger">Desculpe, o servidor não está respondendo. Por gentileza, tente novamente mais tarde.</p>
+                </div>
+            </div>
+        </div>
+    </aside>

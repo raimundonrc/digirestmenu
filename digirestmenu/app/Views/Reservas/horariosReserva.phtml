@@ -1,0 +1,14 @@
+<?php foreach($horario as $hora){?>
+    <option 
+        value="<?= $hora ?>"
+        <?php 
+            foreach($bloqueio as $blo){
+                if($hora == $blo){
+                    echo 'disabled ';
+                }
+            }
+        ?>
+    >
+        <?= $hora ?>
+    </option> 
+<?php }?>

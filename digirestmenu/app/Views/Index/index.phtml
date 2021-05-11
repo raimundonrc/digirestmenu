@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <!-- Meta tags Obrigatórias -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
+
+    <!-- HTML5Shiv -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <!-- CSS personalizado -->
+    <link rel="stylesheet" href="../css/style.css">
+
+    <script src="../js/script.js"></script>
+
+    <title>Cardápio Online</title>
+
+</head>
+<body id="index">
+    <header class="<?php echo count($itensDestaque) < 1 ? '' : 'h-40v' ?>">
+        <div class="bg-dark d-flex py-1 justify-content-center">
+            <button id="btn-avaliacao-estab" class="text-light mr-4" data-url="<?=$_SESSION['client']->rota_raiz?>/avaliacao/estabelecimento/procuracadastro">
+                Avaliar Restaurante
+            </button>            
+            <a href="<?=$_SESSION['client']->rota_raiz?>/reservas" class="text-light" target="_blank">Fazer uma reserva</a>
+        </div>
+        <div id="carouselBanner" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
+                <?php for($i = 0; $i < count($itensDestaque); $i++){ ?>
+                    <li data-target="#carouselBanner" data-slide-to="<?= $i?>" class="active">
+                    </li>
+                <?php } ?>
+            </ol>
+
+            <div class="carousel-inner"> 
+                <?php if(count($itensDestaque) < 1) {?>
+                    <div class="p-2">
+                        <?php if($estab->foto_logo){ ?>
+                            <img src="../img/<?= $estab->foto_logo ?>" alt="Logo" width="90" height="90" class="rounded-circle d-block mb-2 mx-auto double-border">
+                        <?php } ?>
+                        <h4 class="p-1 text-center"><?= $estab->estabelecimento ?></h4>
+                    </div>  
+                <?php } ?>
+                <?php foreach($itensDestaque as $destaque){ ?>              
+                    <div id="item-<?= $destaque->id ?>" class="carousel-item <?php echo $itensDestaque[0]->id == $destaque->id ? 'active' : '' ?>">  
+                        <div class="p-2">
+                            <?php if($estab->foto_logo){ ?>
+                                <img src="../img/<?= $estab->foto_logo ?>" alt="Logo" width="90" height="90" class="rounded-circle d-block mb-2 double-border">
+                            <?php } ?>
+                            <h6 class="text-light bg-trasparent p-1 max-w-40"><?= $estab->estabelecimento ?></h6>
+                        </div>              
+                        <script>
+                            setBg('#item-<?= $destaque->id ?>', '../img/<?= $destaque->foto ?>');
+                        </script>
+                    </div>
+                <?php } ?>
+            </div>
+        </div>
+    </header>
+    <aside class="sticky-top">
+        <nav id="subgrupo" class="subgrupo m-0">
+            <?php foreach($subgrupo as $subValue){ ?>
+                <a 
+                    href="#index" id="__btn-<?= $subValue->id?>" 
+                    class="link-subgrupo <?php echo ($subValue->id == $subgrupo[0]->id) ? 'pagina-ativa' : ''?>" 
+                    onclick="exibir('#__<?= $subValue->id?>');
+                    setPaginaAtiva('#__btn-<?= $subValue->id?>'); scrollHeader('__btn-<?= $subValue->id?>');"
+                >
+                <?= $subValue->descricao?>
+                </a>
+            <?php } ?>
+        </nav>
+    </aside>
+
+    <main class="p-2">  
+        
+        <?php foreach($subgrupo as $subValue){ ?>
+            <section id="__<?= $subValue->id?>" class="<?php echo ($subValue->id != $subgrupo[0]->id) ? 'd-none ' : ''?>__subgrupo container pt-3">
+                <h3 class="text-center mb-4"><?= $subValue->descricao?></h3> 
+
+                <div class="row">
+
+                    <?php foreach($item as $itemValue){ ?>
+                        <?php if($itemValue->id_subgrupo ===  $subValue->id){?>
+                            <div class="col-lg-5 border-bottom border-top d-flex p-0 py-2 mt-2 ml-md-5">
+                                <?php if($subValue->aparece_imagem){?>
+                                    <img 
+                                        src="../img/<?php echo $itemValue->foto ? $itemValue->foto: 'produto-sem-imagem.gif' ?>" 
+                                        alt="foto produto" 
+                                        width="150" 
+                                        height="150" 
+                                        class="rounded align-self-center"
+                                    >
+                                <?php } ?>
+                                <div class="px-2 produto w-100">
+                                    <h5 class="produto-item"><?= $itemValue->nome?></h5>                                    
+                                    <p class="produto-item"> <?= $itemValue->descricao?></p>
+                                    <div class="d-flex justify-content-between align-items-baseline w-100">
+                                        <p><strong>R$ <?= number_format($itemValue->preco, 2, ',', '.')?></strong></p>
+                                        <button
+                                            class="btn btn-outline-dark btn-sm" 
+                                            onclick="addProdutoModal(
+                                                '<?= $itemValue->nome ?>',
+                                                '../img/<?php echo $itemValue->foto ? $itemValue->foto: 'produto-sem-imagem.gif' ?>',
+                                                '<?= $itemValue->id ?>'
+                                            );"
+                                        >
+                                            Avaliar
+                                        </button>
+                                    </div>
+                                    
+                                </div> 
+                            </div> 
+                        <?php } ?>              
+                    <?php } ?>              
+
+                </div>
+            </section> 
+        <?php } ?> 
+        
+        
+
+    </main>
+
+    <footer class="py-3 border-top">
+        <div class="container d-flex justify-content-center">
+            <?php if($estab->whatsapp){ ?>
+                <a href="https://api.whatsapp.com/send?phone=55<?= $estab->whatsapp?>" target="_blank" class="text-secondary mr-3">
+                    <i class="fa fa-whatsapp fa-2x"></i>
+                </a>
+            <?php } ?>
+            <?php if($estab->instagram){ ?>
+                <a href="<?= $estab->instagram?>" target="_blank" class="text-secondary mr-3">
+                    <i class="fab fa-instagram fa-2x"></i>
+                </a>
+            <?php } ?>
+            <?php if($estab->facebook){ ?>
+                <a href="<?= $estab->facebook?>" target="_blank" class="text-secondary mr-3">
+                    <i class="fab fa-facebook fa-2x"></i>
+                </a>
+            <?php } ?>
+            <?php if($estab->twitter){ ?>
+                <a href="<?= $estab->twitter?>" target="_blank" class="text-secondary mr-3">
+                    <i class="fab fa-twitter fa-2x"></i>
+                </a>
+            <?php } ?>
+            <?php if($estab->tripAdvisor){ ?>
+                <a href="<?= $estab->tripAdvisor?>" target="_blank" class="text-secondary mr-3">
+                <i class="fab fa-tripadvisor fa-2x"></i>
+                </a>
+            <?php } ?>
+        </div>
+    </footer>
+
+    <!-- modal de avaliação prato -->
+    <section class="modal" id="modal-avaliacao-prato">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">                        
+                    <div class="d-flex">
+                        <img id="img-modal" src="" alt="Foto do produto" class="rounded-circle" width="100" height="100">
+                        <h4 class="align-self-center ml-3" id="titulo-produto" data-produto=""></h4>
+                    </div>
+                    <button class="close" data-dismiss="modal">x</button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="d-flex justify-content-center py-3">
+                        <i id="starPrato-1" class="fa fa-star-o fa-lg mx-1" data-id="1"></i>
+                        <i id="starPrato-2" class="fa fa-star-o fa-lg mx-1" data-id="2"></i>
+                        <i id="starPrato-3" class="fa fa-star-o fa-lg mx-1" data-id="3"></i>
+                        <i id="starPrato-4" class="fa fa-star-o fa-lg mx-1" data-id="4"></i>                            
+                        <i id="starPrato-5" class="fa fa-star-o fa-lg mx-1" data-id="5"></i>
+                    </div>                    
+                    <textarea id="comentarioPrato" cols="30" rows="5" class="form-control mt-3" placeholder="Tem algo a acrescentar? (Opcional)"></textarea>
+
+                    <div class="text-center">
+                        <small id="avaliando-prato-como"></small>
+                        <small><a id="btn-prato-nao-sou" href="#"></a></small>
+                    </div>
+                </div>
+
+                <div class="modal-footer d-flex justify-content-between">
+                    <button id="btnAvaliarPrato" class="btn btn-success" data-url="<?=$_SESSION['client']->rota_raiz?>/avaliacao/estabelecimento/procuracadastro">Avaliar</button>
+                    <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+
+            </div>               
+        </div>
+    </section>
+
+    <!-- modal de avaliação restaurante -->
+    <section class="modal" id="modal-avaliacao-restaurante">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <?php if($estab->foto_logo){ ?>
+                        <img src="../img/<?= $estab->foto_logo ?>" alt="Logo" width="90" height="90" class="rounded-circle d-block double-border">
+                    <?php } ?>
+                    <h4 class="align-self-center ml-3">Liv Lounge</h4>
+                    <button class="close" data-dismiss="modal">x</button>
+                </div>
+
+                <div class="modal-body">                    
+                    <p class="text-center my-3">Qual nota você avalia nosso estabelecimento?</p>
+                    <div class="mb-4 mt-2 d-flex justify-content-center">
+                        <i id="starEstab-1" class="fa fa-star-o fa-lg mx-1" data-id="1"></i>
+                        <i id="starEstab-2" class="fa fa-star-o fa-lg mx-1" data-id="2"></i>
+                        <i id="starEstab-3" class="fa fa-star-o fa-lg mx-1" data-id="3"></i>
+                        <i id="starEstab-4" class="fa fa-star-o fa-lg mx-1" data-id="4"></i>                            
+                        <i id="starEstab-5" class="fa fa-star-o fa-lg mx-1" data-id="5"></i>                            
+                    </div>
+
+                    <div>
+                        <textarea id="comentarioRestaurante" cols="30" rows="5" class="form-control mt-3" placeholder="Algo a acrescentar? (Opcional)"></textarea>
+                    </div>
+
+                    <div class="text-center">
+                        <small id="avaliando-como"></small>
+                        <small><a id="btn-nao-sou" href="#"></a></small>
+                    </div>
+                </div>
+
+                <div class="modal-header">
+                    <button id="btnAvaliarRest" class="btn btn-success">Avaliar</button>
+                    <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- modal  email - avaliação estab -->
+    <section class="modal" id="modal-email-estab">
+        <div class="modal-dialog">                
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <p>Avaliação estabelecimento</p>
+                    <button class="close" data-dismiss="modal">x</button>                        
+                </div>
+
+                <div class="moda-body p-3"> 
+                    <div class="pb-2">
+                        <p>E-mail.</p>
+                        <input id="email-consulta" type="email" placeholder="E-mail" class="form-control" data-url="<?=$_SESSION['client']->rota_raiz?>/avaliacao/estabelecimento/procuracadastro">
+                    </div>  
+                    <span id="erro-email-consulta" class="text-danger"></span>                                       
+                </div>
+
+                <div class="modal-footer justify-content-between">
+                    <button id="btn-consulta" class="btn btn-success" data-url="<?=$_SESSION['client']->rota_raiz?>/avaliacao/estabelecimento/avalia">Prosseguir</button>
+                    <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- modal  email - avaliação prato -->
+    <section class="modal" id="modal-email-prato">
+        <div class="modal-dialog">                
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <p>Avaliação Prato</p>
+                    <button class="close" data-dismiss="modal">x</button>                        
+                </div>
+
+                <div class="moda-body p-3"> 
+                    <div class="pb-2">
+                        <p>E-mail.</p>
+                        <input id="email-prato-consulta" type="email" placeholder="E-mail" class="form-control" data-url="<?=$_SESSION['client']->rota_raiz?>/avaliacao/estabelecimento/procuracadastro">
+                    </div>  
+                    <span id="erro-email-prato-consulta" class="text-danger"></span>                                       
+                </div>
+
+                <div class="modal-footer justify-content-between">
+                    <button id="btn-consulta-prato" class="btn btn-success" data-url="<?=$_SESSION['client']->rota_raiz?>/avaliacao/prato/avalia">Prosseguir</button>
+                    <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- modal de input dos dados do cliente - avaliação prato -->
+    <section class="modal" id="modal-dados-cliente-prato">
+        <div class="modal-dialog">                
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <p>Concluir avaliação</p>
+                    <button class="close" data-dismiss="modal">x</button>                        
+                </div>
+
+                <div class="moda-body p-3">
+                <p>Você ainda não possui cadastro. Vamos cadastrar? É rapidinho!</p>                                          
+                    <div class="pb-2">
+                        <input id="pratoNome" type="text" placeholder="Nome" class="form-control">
+                        <span id="erro-prato-nome" class="text-danger d-inline-block py-2"></span>
+                    </div> 
+                    <div class="pb-2">
+                        <input id="pratoEmail" type="email" placeholder="E-mail" class="form-control">
+                        <span id="email-exist-error-prato" class="text-danger d-none">O e-mail informado já está cadastrado.</span>
+                        <span id="erro-prato-email" class="text-danger d-inline-block py-2"></span>
+                    </div>
+                    <div class="pb-2">
+                        <input id="pratoTelefone" type="tel" placeholder="Telefone Ex: (00) 00000-0000" class="form-control" onkeypress="$(this).mask('(00) 0000-00009')">
+                        <span id="erro-prato-telefone" class="text-danger d-inline-block py-2"></span>
+                    </div>                                             
+                </div>
+
+                <div class="modal-footer justify-content-between">
+                    <button class="btn btn-success" onclick="enviarDadosPratoCadastro('<?=$_SESSION['client']->rota_raiz?>/avaliacao/prato/cadastra');">Enviar avaliação</button>
+                    <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- modal de input dos dados do cliente - avaliação estabelecimento-->
+    <section class="modal" id="modal-dados-cliente-estabelecimento">
+        <div class="modal-dialog">                
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h6>Concluir avaliação</h6>
+                    <button class="close" data-dismiss="modal">x</button>                        
+                </div>
+
+                <div class="moda-body p-3">   
+                    <p>Você ainda não possui cadastro. Vamos cadastrar? É rapidinho!</p>                   
+                    <div>
+                        <input id="estab-nome" type="text" placeholder="Nome" class="form-control" >
+                    </div> 
+                    <span id="erro-estab-nome" class="text-danger d-inline-block py-2"></span>
+                    <div>
+                        <input id="estab-email" type="email" placeholder="E-mail" class="form-control">
+                        <span id="email-exist-error" class="text-danger d-none">O e-mail informado já está cadastrado.</span>
+                    </div>
+                    <span id="erro-estab-email" class="text-danger d-inline-block py-2"></span>
+                    <div>
+                        <input id="estab-telefone" type="tel" placeholder="Telefone Ex: (00) 00000-0000" class="form-control" onkeypress="$(this).mask('(00) 0000-00009')">
+                    </div>
+                    <span id="erro-estab-telefone" class="text-danger d-inline-block py-2"></span>         
+                </div>
+
+                <div class="modal-footer justify-content-between">
+                    <button class="btn btn-success" onclick="enviarDadosEstabCadastro('<?=$_SESSION['client']->rota_raiz?>/avaliacao/estabelecimento/cadastra');">Enviar avaliação</button>
+                    <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- modal de sucesso prato-->
+    <section class="modal" id="modal-sucesso">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <p>Obrigado pela avaliação!</p>
+                    <button class="close" data-dismiss="modal">x</button>
+                </div>
+
+                <div class="modal-body">
+                    <button class="btn btn-outline-dark" data-dismiss="modal" data-toggle="modal" data-target="#modal-avaliacao-restaurante" onclick="addEventOut(); limparTudo();">Gostaria de Avaliar o restaurante?</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- modal de sucesso restaurante -->
+    <section class="modal" id="modal-sucesso-restaurante">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <p>Obrigado pela avaliação!</p>
+                    <button class="close" data-dismiss="modal">x</button>
+                </div>
+
+                <div class="modal-body">
+                    <button class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- modal de erro -->
+    <section class="modal" id="modal-erro">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <p>Desculpe, não foi possível Concluir sua avaliação, por gentileza, tente novamente mais tarde.</p>
+                    <button class="close" data-dismiss="modal">x</button>
+                </div>
+
+                <div class="modal-body">
+                    <button class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- JavaScript (Opcional) -->
+    <!-- jQuery primeiro, depois Popper.js, depois Bootstrap JS -->
+    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <!-- Fontawesome -->
+    <script src="https://kit.fontawesome.com/5d876fab93.js" crossorigin="anonymous"></script>
+</body>
+</html>
